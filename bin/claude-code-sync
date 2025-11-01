@@ -1,6 +1,6 @@
 #!/bin/bash
-# claude-sync - CLI Configuration Management Tool
-# Version 1.0.0 - Phase 1 (Core Backup/Restore)
+# claude-code-sync - CLI Configuration Management Tool
+# Version 1.3.0 - Project Renamed
 
 set -euo pipefail
 
@@ -18,7 +18,7 @@ source "$LIB_DIR/storage.sh"
 source "$LIB_DIR/snapshot.sh"
 
 # Version
-readonly VERSION="1.2.0"
+readonly VERSION="1.3.0"
 
 # Global flags
 DRY_RUN=false
@@ -29,14 +29,14 @@ INTERACTIVE=true
 
 # Show version
 show_version() {
-    echo "claude-sync v$VERSION"
+    echo "claude-code-sync v$VERSION"
     echo "CLI utility for backing up and restoring Claude Code configurations"
 }
 
 # Show help
 show_help() {
     cat <<EOF
-Usage: claude-sync <command> [options]
+Usage: claude-code-sync <command> [options]
 
 Commands:
     init                Initialize backup system
@@ -60,40 +60,40 @@ Options:
 
 Examples:
     # Initialize backup system
-    claude-sync init
+    claude-code-sync init
 
     # Create encrypted backup
-    claude-sync backup
+    claude-code-sync backup
 
     # Preview what would be backed up
-    claude-sync backup --dry-run
+    claude-code-sync backup --dry-run
 
     # Restore with interactive conflict resolution
-    claude-sync restore
+    claude-code-sync restore
 
     # Restore without prompts (use backup version)
-    claude-sync restore --no-interactive
+    claude-code-sync restore --no-interactive
 
     # Check status
-    claude-sync status
+    claude-code-sync status
 
     # Initialize git repository
-    claude-sync init --git git@github.com:user/claude-configs.git
+    claude-code-sync init --git git@github.com:user/claude-configs.git
 
     # Sync with git repository
-    claude-sync sync
+    claude-code-sync sync
 
     # Create a snapshot
-    claude-sync snapshot create "before-experiment"
+    claude-code-sync snapshot create "before-experiment"
 
     # List all snapshots
-    claude-sync snapshot list
+    claude-code-sync snapshot list
 
     # Restore from snapshot
-    claude-sync snapshot restore "before-experiment"
+    claude-code-sync snapshot restore "before-experiment"
 
     # Verify encryption is working
-    claude-sync verify
+    claude-code-sync verify
 
 Documentation:
     README.md                           - User guide
@@ -373,10 +373,46 @@ main() {
             show_version
             ;;
         *)
-            log_error "Unknown command: $command\n\nRun 'claude-sync help' for usage information"
+            log_error "Unknown command: $command\n\nRun 'claude-code-sync help' for usage information"
             ;;
     esac
 }
+
+# Migrate old directory structure if needed
+migrate_legacy_directory() {
+    local old_dir="$HOME/.claude-sync"
+    local new_dir="$HOME/.claude-code-sync"
+
+    # Only migrate if old exists and new doesn't
+    if [ -d "$old_dir" ] && [ ! -d "$new_dir" ]; then
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  Migration Notice"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "The project has been renamed from 'claude-sync' to 'claude-code-sync'."
+        echo ""
+        echo "Old directory: $old_dir"
+        echo "New directory: $new_dir"
+        echo ""
+
+        if confirm_action "Migrate existing data to new directory?"; then
+            log_info "Migrating $old_dir → $new_dir"
+            mv "$old_dir" "$new_dir"
+            log_info "✓ Migration complete!"
+            echo ""
+            log_info "Your data has been moved. The old directory no longer exists."
+            log_info "You can now use 'claude-code-sync' commands (the new name)."
+            echo ""
+        else
+            log_warn "Migration skipped. Both directories will coexist."
+            log_warn "Consider migrating manually: mv $old_dir $new_dir"
+            echo ""
+        fi
+    fi
+}
+
+# Run migration check
+migrate_legacy_directory
 
 # Run main
 main "$@"

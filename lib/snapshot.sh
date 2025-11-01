@@ -7,12 +7,12 @@ source "$SCRIPT_DIR/utils.sh"
 source "$SCRIPT_DIR/encryption.sh"
 
 # Use same directory configuration
-if [ -z "${CLAUDE_SYNC_DIRS_SET:-}" ]; then
-    readonly SYNC_DIR="$HOME/.claude-sync"
+if [ -z "${CLAUDE_CODE_SYNC_DIRS_SET:-}" ]; then
+    readonly SYNC_DIR="$HOME/.claude-code-sync"
     readonly STORAGE_DIR="$SYNC_DIR/storage"
     readonly SNAPSHOTS_DIR="$STORAGE_DIR/snapshots"
     readonly CURRENT_DIR="$STORAGE_DIR/current"
-    readonly CLAUDE_SYNC_DIRS_SET=1
+    readonly CLAUDE_CODE_SYNC_DIRS_SET=1
 fi
 
 # Create a named snapshot
@@ -31,7 +31,7 @@ snapshot_create() {
 
     # Check if latest backup exists
     if [ ! -f "$CURRENT_DIR/latest-backup.tar.gz.gpg" ]; then
-        log_error "No backup found. Create a backup first with: claude-sync backup"
+        log_error "No backup found. Create a backup first with: claude-code-sync backup"
     fi
 
     # Create snapshot directory
@@ -82,7 +82,7 @@ snapshot_list() {
     if [ ! -d "$SNAPSHOTS_DIR" ] || [ -z "$(ls -A "$SNAPSHOTS_DIR" 2>/dev/null)" ]; then
         log_warn "No snapshots found"
         echo ""
-        echo "Create a snapshot with: claude-sync snapshot create <name>"
+        echo "Create a snapshot with: claude-code-sync snapshot create <name>"
         return 0
     fi
 
@@ -123,7 +123,7 @@ snapshot_restore() {
     local snapshot_name="$1"
 
     if [ -z "$snapshot_name" ]; then
-        log_error "Snapshot name required. List snapshots with: claude-sync snapshot list"
+        log_error "Snapshot name required. List snapshots with: claude-code-sync snapshot list"
     fi
 
     local snapshot_dir="$SNAPSHOTS_DIR/$snapshot_name"
@@ -146,7 +146,7 @@ snapshot_restore() {
         cp "$snapshot_dir/backup.hostname" "$CURRENT_DIR/latest-backup.hostname"
 
     log_info "✓ Snapshot copied to current backup"
-    log_info "Now run: claude-sync restore"
+    log_info "Now run: claude-code-sync restore"
 }
 
 # Delete a snapshot

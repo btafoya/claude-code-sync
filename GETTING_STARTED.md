@@ -1,4 +1,4 @@
-# Getting Started with claude-sync
+# Getting Started with claude-code-sync
 
 ## Quick Installation & First Backup
 
@@ -17,7 +17,7 @@ sudo apt update
 sudo apt install gnupg tar gzip coreutils jq rsync
 ```
 
-### 2. Install claude-sync
+### 2. Install claude-code-sync
 
 ```bash
 # From the project directory
@@ -31,22 +31,22 @@ source ~/.bashrc
 ### 3. Verify Installation
 
 ```bash
-claude-sync --version
-# Should show: claude-sync v1.0.0-phase1
+claude-code-sync --version
+# Should show: claude-code-sync v1.0.0-phase1
 ```
 
 ### 4. Initialize Backup System
 
 ```bash
-claude-sync init
+claude-code-sync init
 ```
 
-This creates `~/.claude-sync/` directory structure.
+This creates `~/.claude-code-sync/` directory structure.
 
 ### 5. Create Your First Backup
 
 ```bash
-claude-sync backup
+claude-code-sync backup
 ```
 
 You'll be prompted to:
@@ -58,7 +58,7 @@ You'll be prompted to:
 ### 6. Check Status
 
 ```bash
-claude-sync status
+claude-code-sync status
 ```
 
 Shows:
@@ -70,7 +70,7 @@ Shows:
 ### 7. Test Restore (Dry Run)
 
 ```bash
-claude-sync restore --dry-run
+claude-code-sync restore --dry-run
 ```
 
 Shows what would be restored without actually doing it.
@@ -83,10 +83,10 @@ Shows what would be restored without actually doing it.
 
 ```bash
 # Create backup
-claude-sync backup
+claude-code-sync backup
 
 # Find the backup file
-ls -lh ~/.claude-sync/storage/current/latest-backup.tar.gz.gpg
+ls -lh ~/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg
 ```
 
 ### Transfer to Machine 2
@@ -94,31 +94,31 @@ ls -lh ~/.claude-sync/storage/current/latest-backup.tar.gz.gpg
 **Option 1: Manual Transfer**
 ```bash
 # Copy the encrypted file to USB or cloud storage
-cp ~/.claude-sync/storage/current/latest-backup.tar.gz.gpg /path/to/usb/
+cp ~/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg /path/to/usb/
 ```
 
 **Option 2: SCP Transfer**
 ```bash
 # Direct transfer via SSH
-scp ~/.claude-sync/storage/current/latest-backup.tar.gz.gpg user@machine2:~/
+scp ~/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg user@machine2:~/
 ```
 
 ### On Machine 2 (Home Desktop)
 
 ```bash
 # Initialize on new machine
-claude-sync init
+claude-code-sync init
 
 # Place the backup file
-cp /path/from/transfer/latest-backup.tar.gz.gpg ~/.claude-sync/storage/current/
+cp /path/from/transfer/latest-backup.tar.gz.gpg ~/.claude-code-sync/storage/current/
 
 # Copy metadata files too (optional but recommended)
-cp latest-backup.checksum ~/.claude-sync/storage/current/
-cp latest-backup.timestamp ~/.claude-sync/storage/current/
-cp latest-backup.hostname ~/.claude-sync/storage/current/
+cp latest-backup.checksum ~/.claude-code-sync/storage/current/
+cp latest-backup.timestamp ~/.claude-code-sync/storage/current/
+cp latest-backup.hostname ~/.claude-code-sync/storage/current/
 
 # Restore
-claude-sync restore
+claude-code-sync restore
 ```
 
 Enter the same password you used for encryption.
@@ -131,20 +131,20 @@ Enter the same password you used for encryption.
 
 ```bash
 # Simple daily backup
-claude-sync backup
+claude-code-sync backup
 ```
 
 ### Before Major Changes
 
 ```bash
 # Backup before experimenting
-claude-sync backup
+claude-code-sync backup
 
 # Make changes to Claude Code configs
 # ...
 
 # If something breaks, restore
-claude-sync restore
+claude-code-sync restore
 ```
 
 ### Conflict Handling
@@ -177,7 +177,7 @@ Choose the appropriate action for each conflict.
 
 Create a backup first:
 ```bash
-claude-sync backup
+claude-code-sync backup
 ```
 
 ### "Decryption failed"
@@ -190,8 +190,8 @@ claude-sync backup
 
 Fix permissions:
 ```bash
-chmod 700 ~/.claude-sync
-chmod 600 ~/.claude-sync/config/*
+chmod 700 ~/.claude-code-sync
+chmod 600 ~/.claude-code-sync/config/*
 ```
 
 ### "Missing dependencies"

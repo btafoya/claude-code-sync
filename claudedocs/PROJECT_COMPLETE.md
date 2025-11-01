@@ -1,4 +1,4 @@
-# PROJECT COMPLETE - claude-sync v1.1.0
+# PROJECT COMPLETE - claude-code-sync v1.1.0
 
 **Status**: ✅ **COMPLETE AND TESTED**
 **Completion Date**: 2025-11-01
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The **claude-sync** project has been successfully implemented and tested. All planned features from Phases 1-3 have been completed, including:
+The **claude-code-sync** project has been successfully implemented and tested. All planned features from Phases 1-3 have been completed, including:
 
 - ✅ Core backup/restore functionality
 - ✅ AES-256 encryption via GPG
@@ -30,7 +30,7 @@ The **claude-sync** project has been successfully implemented and tested. All pl
 - `lib/backup.sh` - Full backup workflow
 - `lib/restore.sh` - Restore with conflict detection
 - `lib/conflict.sh` - Interactive conflict resolution
-- `bin/claude-sync` - Main CLI executable
+- `bin/claude-code-sync` - Main CLI executable
 
 **Features**:
 - Encrypted backups with AES-256
@@ -60,8 +60,8 @@ The **claude-sync** project has been successfully implemented and tested. All pl
 
 **Commands Added**:
 ```bash
-claude-sync init --git <repo-url>  # Initialize with git
-claude-sync sync                    # Bidirectional sync
+claude-code-sync init --git <repo-url>  # Initialize with git
+claude-code-sync sync                    # Bidirectional sync
 ```
 
 **Testing**:
@@ -83,11 +83,11 @@ claude-sync sync                    # Bidirectional sync
 
 **Commands Added**:
 ```bash
-claude-sync snapshot create <name>    # Create named snapshot
-claude-sync snapshot list              # List all snapshots
-claude-sync snapshot restore <name>    # Restore from snapshot
-claude-sync snapshot delete <name>     # Delete snapshot
-claude-sync snapshot diff <s1> <s2>    # Compare snapshots
+claude-code-sync snapshot create <name>    # Create named snapshot
+claude-code-sync snapshot list              # List all snapshots
+claude-code-sync snapshot restore <name>    # Restore from snapshot
+claude-code-sync snapshot delete <name>     # Delete snapshot
+claude-code-sync snapshot diff <s1> <s2>    # Compare snapshots
 ```
 
 **Testing**:
@@ -129,9 +129,9 @@ Test Coverage:
 ## File Structure
 
 ```
-claude-sync/
+claude-code-sync/
 ├── bin/
-│   └── claude-sync              # Main CLI executable (v1.1.0)
+│   └── claude-code-sync              # Main CLI executable (v1.1.0)
 ├── lib/
 │   ├── utils.sh                 # Logging and utilities
 │   ├── encryption.sh            # AES-256 encryption
@@ -165,26 +165,26 @@ claude-sync/
 
 ### Core Operations
 ```bash
-claude-sync init                 # Initialize backup system
-claude-sync backup               # Create encrypted backup
-claude-sync restore              # Restore from backup
-claude-sync status               # Show sync status
-claude-sync verify               # Verify encryption setup
+claude-code-sync init                 # Initialize backup system
+claude-code-sync backup               # Create encrypted backup
+claude-code-sync restore              # Restore from backup
+claude-code-sync status               # Show sync status
+claude-code-sync verify               # Verify encryption setup
 ```
 
 ### Git Integration
 ```bash
-claude-sync init --git <repo>    # Initialize with git repository
-claude-sync sync                 # Sync with git repository
+claude-code-sync init --git <repo>    # Initialize with git repository
+claude-code-sync sync                 # Sync with git repository
 ```
 
 ### Snapshot Management
 ```bash
-claude-sync snapshot create <name>    # Create named snapshot
-claude-sync snapshot list              # List all snapshots
-claude-sync snapshot restore <name>    # Restore from snapshot
-claude-sync snapshot delete <name>     # Delete snapshot
-claude-sync snapshot diff <s1> <s2>    # Compare snapshots
+claude-code-sync snapshot create <name>    # Create named snapshot
+claude-code-sync snapshot list              # List all snapshots
+claude-code-sync snapshot restore <name>    # Restore from snapshot
+claude-code-sync snapshot delete <name>     # Delete snapshot
+claude-code-sync snapshot diff <s1> <s2>    # Compare snapshots
 ```
 
 ### Global Options
@@ -216,7 +216,7 @@ claude-sync snapshot diff <s1> <s2>    # Compare snapshots
 ### Permissions
 - **Directories**: 700 (user-only access)
 - **Files**: 600 (user-only read/write)
-- **Configuration**: Protected in ~/.claude-sync/
+- **Configuration**: Protected in ~/.claude-code-sync/
 
 ---
 
@@ -245,17 +245,17 @@ sudo apt install gnupg tar gzip coreutils rsync git jq
 
 ### Method 1: Install Script
 ```bash
-git clone https://github.com/yourusername/claude-sync.git
-cd claude-sync
+git clone https://github.com/yourusername/claude-code-sync.git
+cd claude-code-sync
 ./install.sh
 ```
 
 ### Method 2: Manual
 ```bash
-git clone https://github.com/yourusername/claude-sync.git
+git clone https://github.com/yourusername/claude-code-sync.git
 mkdir -p ~/.local/bin
-cp claude-sync/bin/claude-sync ~/.local/bin/
-chmod +x ~/.local/bin/claude-sync
+cp claude-code-sync/bin/claude-code-sync ~/.local/bin/
+chmod +x ~/.local/bin/claude-code-sync
 
 # Add to PATH if needed
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
@@ -269,58 +269,58 @@ source ~/.bashrc
 ### First Time Setup
 ```bash
 # Basic initialization
-claude-sync init
+claude-code-sync init
 
 # Initialize with git repository
-claude-sync init --git git@github.com:user/claude-configs.git
+claude-code-sync init --git git@github.com:user/claude-configs.git
 
 # Create first backup
-claude-sync backup
+claude-code-sync backup
 
 # Check status
-claude-sync status
+claude-code-sync status
 ```
 
 ### Daily Workflow
 ```bash
 # Morning: Sync latest changes
-claude-sync sync
+claude-code-sync sync
 
 # Make changes to Claude Code configs
 # ...
 
 # Evening: Backup and sync
-claude-sync backup
+claude-code-sync backup
 ```
 
 ### Snapshot Management
 ```bash
 # Create snapshot before major changes
-claude-sync snapshot create "before-mcp-update"
+claude-code-sync snapshot create "before-mcp-update"
 
 # Make changes
 # ...
 
 # If something breaks, restore
-claude-sync snapshot restore "before-mcp-update"
+claude-code-sync snapshot restore "before-mcp-update"
 
 # List all snapshots
-claude-sync snapshot list
+claude-code-sync snapshot list
 
 # Compare snapshots
-claude-sync snapshot diff "morning" "evening"
+claude-code-sync snapshot diff "morning" "evening"
 ```
 
 ### Restore Workflow
 ```bash
 # Interactive restore (recommended)
-claude-sync restore --interactive
+claude-code-sync restore --interactive
 
 # Auto-resolve conflicts (use backup version)
-claude-sync restore --no-interactive
+claude-code-sync restore --no-interactive
 
 # Preview restore without executing
-claude-sync restore --dry-run
+claude-code-sync restore --dry-run
 ```
 
 ---
@@ -432,7 +432,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ### Getting Help
 - Check [README.md](../README.md) for user guide
 - Review [troubleshooting section](../README.md#troubleshooting)
-- Open an [issue](https://github.com/yourusername/claude-sync/issues)
+- Open an [issue](https://github.com/yourusername/claude-code-sync/issues)
 
 ### Contributing
 1. Fork the repository
@@ -456,7 +456,7 @@ All planned features have been successfully implemented and tested:
 - ✅ Complete documentation
 - ✅ Production-ready code
 
-**The claude-sync v1.1.0 utility is ready for production use.**
+**The claude-code-sync v1.1.0 utility is ready for production use.**
 
 ---
 

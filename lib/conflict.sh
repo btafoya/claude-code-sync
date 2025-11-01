@@ -32,7 +32,7 @@ detect_conflicts() {
         log_warn "Found $conflict_count conflicting file(s)"
 
         # Store conflicts for later resolution
-        printf '%s\n' "${conflicts[@]}" > /tmp/claude-sync-conflicts-$$
+        printf '%s\n' "${conflicts[@]}" > /tmp/claude-code-sync-conflicts-$$
 
         return 1  # Conflicts exist
     else
@@ -143,14 +143,14 @@ resolve_conflicts_interactive() {
     local backup_dir="$1"
     local target_dir="$2"
 
-    if [ ! -f /tmp/claude-sync-conflicts-$$ ]; then
+    if [ ! -f /tmp/claude-code-sync-conflicts-$$ ]; then
         log_debug "No conflicts to resolve"
         return 0
     fi
 
     log_info "Starting interactive conflict resolution"
 
-    local resolution_log="$HOME/.claude-sync/logs/conflicts.log"
+    local resolution_log="$HOME/.claude-code-sync/logs/conflicts.log"
     ensure_directory "$(dirname "$resolution_log")"
 
     while IFS= read -r rel_path; do
@@ -178,10 +178,10 @@ resolve_conflicts_interactive() {
                 # Do nothing
                 ;;
         esac
-    done < /tmp/claude-sync-conflicts-$$
+    done < /tmp/claude-code-sync-conflicts-$$
 
     # Cleanup
-    rm -f /tmp/claude-sync-conflicts-$$
+    rm -f /tmp/claude-code-sync-conflicts-$$
 
     log_info "✓ Conflict resolution complete"
 }
@@ -204,10 +204,10 @@ resolve_conflicts_auto() {
 
         log_info "Overwriting: $rel_path"
         cp -f "$backup_file" "$current_file"
-    done < /tmp/claude-sync-conflicts-$$
+    done < /tmp/claude-code-sync-conflicts-$$
 
     # Cleanup
-    rm -f /tmp/claude-sync-conflicts-$$
+    rm -f /tmp/claude-code-sync-conflicts-$$
 
     log_info "✓ Auto-resolution complete"
 }

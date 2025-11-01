@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-11-01
+
+### Changed
+- **Project Renamed**: Renamed from `claude-sync` to `claude-code-sync`
+  - CLI command: `claude-sync` → `claude-code-sync`
+  - User data directory: `~/.claude-sync` → `~/.claude-code-sync`
+  - All internal references, documentation, and code updated
+  - Install location: `~/.local/lib/claude-sync` → `~/.local/lib/claude-code-sync`
+
+### Added
+- **Automatic Migration**: Added migration logic to automatically detect and migrate existing `~/.claude-sync` directories
+  - Prompts user before migrating data to new directory structure
+  - Preserves all existing backups, snapshots, and configuration
+  - One-time migration on first run after upgrade
+
+### Updated
+- Updated all documentation to reflect new project name
+- Updated install.sh to use new command and directory names
+- Updated all test files for new naming convention
+- Bumped version to 1.3.0
+
 ## [1.2.0] - 2025-11-01
 
 ### Added
@@ -71,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `lib/backup.sh` - Backup workflow
   - `lib/restore.sh` - Restore workflow
   - `lib/conflict.sh` - Conflict detection and resolution
-  - `bin/claude-sync` - Main CLI executable
+  - `bin/claude-code-sync` - Main CLI executable
 
 - **Testing**
   - Unit test suite (test_utils.sh)
@@ -97,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **v1.3.0** - Project renamed to claude-code-sync with automatic migration
 - **v1.2.0** - Automatic dependency installation
 - **v1.1.0** - Git integration and snapshot management
 - **v1.0.0** - Initial release with core backup/restore

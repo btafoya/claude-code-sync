@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-Project-specific guidance for Claude Code when working on the **claude-sync** repository.
+Project-specific guidance for Claude Code when working on the **claude-code-sync** repository.
 
 ---
 
 ## Project Overview
 
-**claude-sync** is a CLI utility for backing up, restoring, and synchronizing Claude Code configurations across multiple Ubuntu machines. The tool provides encrypted backups, multiple sync strategies (git, manual, SSH direct), and intelligent conflict resolution.
+**claude-code-sync** is a CLI utility for backing up, restoring, and synchronizing Claude Code configurations across multiple Ubuntu machines. The tool provides encrypted backups, multiple sync strategies (git, manual, SSH direct), and intelligent conflict resolution.
 
 ### Key Technologies
 - **Language**: Bash (v4.0+)
@@ -20,9 +20,9 @@ Project-specific guidance for Claude Code when working on the **claude-sync** re
 ## Project Structure
 
 ```
-claude-sync/
+claude-code-sync/
 ├── bin/
-│   └── claude-sync              # Main CLI executable
+│   └── claude-code-sync              # Main CLI executable
 ├── lib/
 │   ├── utils.sh                # Logging, utilities, helpers
 │   ├── encryption.sh           # Encryption/decryption engine
@@ -102,8 +102,8 @@ gpg --passphrase "$password" ...
 
 **File Permissions**:
 ```bash
-chmod 700 ~/.claude-sync           # Owner only
-chmod 600 ~/.claude-sync/config/*  # Owner read/write
+chmod 700 ~/.claude-code-sync           # Owner only
+chmod 600 ~/.claude-code-sync/config/*  # Owner read/write
 ```
 
 ### Error Handling
@@ -163,7 +163,7 @@ validate_inputs() {
 **Purpose**: Backup operations
 
 **Key Functions**:
-- `backup_init()` - Initialize `~/.claude-sync/` structure
+- `backup_init()` - Initialize `~/.claude-code-sync/` structure
 - `backup_full()` - Full backup workflow
 - `collect_config_files()` - Gather from `~/.claude/`
 - `create_archive()` - Package files into tar.gz
@@ -262,22 +262,22 @@ test_function_name
 ### Manual Testing Workflow
 ```bash
 # 1. Test initialization
-./bin/claude-sync init
+./bin/claude-code-sync init
 
 # 2. Test dry-run
-./bin/claude-sync backup --dry-run
+./bin/claude-code-sync backup --dry-run
 
 # 3. Test actual backup
-./bin/claude-sync backup
+./bin/claude-code-sync backup
 
 # 4. Verify files created
-ls -lh ~/.claude-sync/storage/current/
+ls -lh ~/.claude-code-sync/storage/current/
 
 # 5. Test restore dry-run
-./bin/claude-sync restore --dry-run
+./bin/claude-code-sync restore --dry-run
 
 # 6. Test status
-./bin/claude-sync status
+./bin/claude-code-sync status
 ```
 
 ---
@@ -296,13 +296,13 @@ ls -lh ~/.claude-sync/storage/current/
 - [ ] `lib/backup.sh` implemented
 - [ ] `lib/restore.sh` implemented
 - [ ] `lib/conflict.sh` implemented
-- [ ] `bin/claude-sync` CLI working
+- [ ] `bin/claude-code-sync` CLI working
 - [ ] Tests passing
 - [ ] Manual testing complete
 
 **Success Criteria**:
-- `claude-sync backup` creates encrypted backup
-- `claude-sync restore` restores files
+- `claude-code-sync backup` creates encrypted backup
+- `claude-code-sync restore` restores files
 - Conflicts detected correctly
 - All tests pass
 
@@ -379,7 +379,7 @@ test_new_backup_feature() {
 
 1. **Add command handler**:
 ```bash
-# bin/claude-sync
+# bin/claude-code-sync
 cmd_newcommand() {
     parse_global_flags "$@"
     # Implementation
@@ -417,8 +417,8 @@ set -x  # Print each command
 
 **Check logs**:
 ```bash
-tail -f ~/.claude-sync/logs/sync.log
-tail -f ~/.claude-sync/logs/errors.log
+tail -f ~/.claude-code-sync/logs/sync.log
+tail -f ~/.claude-code-sync/logs/errors.log
 ```
 
 **Test encryption manually**:
@@ -460,7 +460,7 @@ trap cleanup EXIT
 ### Configuration Management
 ```bash
 # Load config
-source "$HOME/.claude-sync/config/sync.conf"
+source "$HOME/.claude-code-sync/config/sync.conf"
 
 # Use defaults
 BACKUP_MODE="${BACKUP_MODE:-full}"
@@ -493,7 +493,7 @@ BACKUP_MODE="${BACKUP_MODE:-full}"
 5. Update documentation as needed
 
 ### When Debugging Issues
-1. Check logs in `~/.claude-sync/logs/`
+1. Check logs in `~/.claude-code-sync/logs/`
 2. Enable verbose mode: `--verbose`
 3. Use dry-run mode: `--dry-run`
 4. Review error handling in code

@@ -1,4 +1,4 @@
-# claude-sync: Quick Start Guide
+# claude-code-sync: Quick Start Guide
 
 Get your CLI configuration management tool up and running in minutes.
 
@@ -6,7 +6,7 @@ Get your CLI configuration management tool up and running in minutes.
 
 ## What You're Building
 
-**claude-sync** is a comprehensive CLI utility that will:
+**claude-code-sync** is a comprehensive CLI utility that will:
 - 🔐 **Backup** your Claude Code configs with full encryption
 - 🔄 **Sync** across multiple Ubuntu machines (git, manual, or direct)
 - 📦 **Restore** with intelligent conflict resolution
@@ -46,8 +46,8 @@ From our interactive brainstorming session, here's what you want:
 ## Project Structure Overview
 
 ```
-claude-sync/
-├── bin/claude-sync              # Main CLI executable
+claude-code-sync/
+├── bin/claude-code-sync              # Main CLI executable
 ├── lib/                        # Core modules
 │   ├── backup.sh              # Backup operations
 │   ├── restore.sh             # Restore operations
@@ -75,14 +75,14 @@ claude-sync/
 
 ```bash
 # You're already in the project directory
-cd ~/projects/claude-sync
+cd ~/projects/claude-code-sync
 
 # Create directory structure
 mkdir -p bin lib config docs tests
 
 # Create main files
-touch bin/claude-sync
-chmod +x bin/claude-sync
+touch bin/claude-code-sync
+chmod +x bin/claude-code-sync
 
 # Create library modules
 touch lib/{utils,encryption,backup,restore,conflict,snapshot,sync,storage}.sh
@@ -124,7 +124,7 @@ Core security functions:
 **File**: `lib/backup.sh`
 
 Core backup workflow:
-- `backup_init()` - create `~/.claude-sync/` structure
+- `backup_init()` - create `~/.claude-code-sync/` structure
 - `collect_config_files()` - gather from `~/.claude/`
 - `backup_full()` - complete backup → encrypt → store workflow
 
@@ -143,7 +143,7 @@ Restore workflow:
 
 ### Step 6: Build Main CLI (Day 4-5)
 
-**File**: `bin/claude-sync`
+**File**: `bin/claude-code-sync`
 
 CLI interface:
 - Command parsing and routing
@@ -161,25 +161,25 @@ CLI interface:
 
 ```bash
 # 1. Initialize backup system
-./bin/claude-sync init
+./bin/claude-code-sync init
 
 # 2. Test dry-run backup
-./bin/claude-sync backup --dry-run
+./bin/claude-code-sync backup --dry-run
 
 # 3. Test actual backup (will prompt for password)
-./bin/claude-sync backup
+./bin/claude-code-sync backup
 
 # 4. Verify backup created
-ls -lh ~/.claude-sync/storage/current/
+ls -lh ~/.claude-code-sync/storage/current/
 
 # 5. Test dry-run restore
-./bin/claude-sync restore --dry-run
+./bin/claude-code-sync restore --dry-run
 
 # 6. Test actual restore (in safe test environment!)
-./bin/claude-sync restore
+./bin/claude-code-sync restore
 
 # 7. Check status
-./bin/claude-sync status
+./bin/claude-code-sync status
 ```
 
 ### Unit Testing
@@ -201,11 +201,11 @@ ls -lh ~/.claude-sync/storage/current/
 
 By the end of Phase 1, you'll have:
 
-✅ Working CLI tool (`claude-sync backup/restore/status`)
+✅ Working CLI tool (`claude-code-sync backup/restore/status`)
 ✅ Full encrypted backup of `~/.claude/`
 ✅ Restore with conflict detection
 ✅ Interactive password prompts
-✅ Local storage in `~/.claude-sync/`
+✅ Local storage in `~/.claude-code-sync/`
 ✅ Dry-run mode for safety
 ✅ Basic documentation
 
@@ -217,21 +217,21 @@ By the end of Phase 1, you'll have:
 
 ### Phase 2: Git Integration (Week 3)
 Add automatic git repository sync:
-- `claude-sync init --git <repo-url>`
+- `claude-code-sync init --git <repo-url>`
 - Auto-commit and push on backup
 - Pull and merge on restore
 - Remote repository synchronization
 
 ### Phase 3: Snapshots (Week 4)
 Add versioned restore points:
-- `claude-sync snapshot create "pre-experiment"`
-- `claude-sync snapshot list`
-- `claude-sync snapshot restore "2025-01-15"`
+- `claude-code-sync snapshot create "pre-experiment"`
+- `claude-code-sync snapshot list`
+- `claude-code-sync snapshot restore "2025-01-15"`
 - Named and timestamped snapshots
 
 ### Phase 4: Direct Sync (Week 5)
 Add machine-to-machine sync:
-- `claude-sync sync --remote user@work-laptop`
+- `claude-code-sync sync --remote user@work-laptop`
 - Real-time SSH/rsync synchronization
 - Bidirectional sync with conflict resolution
 
@@ -250,26 +250,26 @@ Production-ready hardening:
 
 ```bash
 # Initialization
-claude-sync init [--git <repo>] [--local] [--all]
+claude-code-sync init [--git <repo>] [--local] [--all]
 
 # Backup
-claude-sync backup [--dry-run] [--verbose]
-claude-sync backup --snapshot "before-experiment"
+claude-code-sync backup [--dry-run] [--verbose]
+claude-code-sync backup --snapshot "before-experiment"
 
 # Restore
-claude-sync restore [--dry-run] [--interactive]
-claude-sync restore --snapshot "2025-01-15"
+claude-code-sync restore [--dry-run] [--interactive]
+claude-code-sync restore --snapshot "2025-01-15"
 
 # Sync (Phase 2+)
-claude-sync sync [--git] [--remote user@host]
+claude-code-sync sync [--git] [--remote user@host]
 
 # Snapshots (Phase 3+)
-claude-sync snapshot create <name>
-claude-sync snapshot list
-claude-sync snapshot restore <name>
+claude-code-sync snapshot create <name>
+claude-code-sync snapshot list
+claude-code-sync snapshot restore <name>
 
 # Status
-claude-sync status
+claude-code-sync status
 ```
 
 ---
@@ -322,8 +322,8 @@ See `IMPLEMENTATION_ROADMAP.md` for:
 **Issue**: `gpg: command not found`
 **Solution**: Install GPG: `sudo apt install gnupg`
 
-**Issue**: Permission denied on `bin/claude-sync`
-**Solution**: Make executable: `chmod +x bin/claude-sync`
+**Issue**: Permission denied on `bin/claude-code-sync`
+**Solution**: Make executable: `chmod +x bin/claude-code-sync`
 
 **Issue**: `~/.claude` not found
 **Solution**: Ensure Claude Code is installed and configured
@@ -378,8 +378,8 @@ Before you start coding, think about:
 
 You'll know Phase 1 is complete when:
 
-- ✅ You can run `claude-sync backup` and see encrypted file created
-- ✅ You can run `claude-sync restore` and configs are restored
+- ✅ You can run `claude-code-sync backup` and see encrypted file created
+- ✅ You can run `claude-code-sync restore` and configs are restored
 - ✅ Password prompts work securely (no echo)
 - ✅ Conflicts are detected and reported
 - ✅ All tests pass without errors

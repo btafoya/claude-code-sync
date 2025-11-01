@@ -1,6 +1,6 @@
-# claude-sync: Implementation Roadmap
+# claude-code-sync: Implementation Roadmap
 
-Quick-start guide for building the claude-sync CLI utility from specification to working tool.
+Quick-start guide for building the claude-code-sync CLI utility from specification to working tool.
 
 ---
 
@@ -19,12 +19,12 @@ Quick-start guide for building the claude-sync CLI utility from specification to
 #### Step 1.1: Project Setup (Day 1)
 ```bash
 # Create project structure
-mkdir -p claude-sync/{bin,lib,config,docs,tests}
-cd claude-sync
+mkdir -p claude-code-sync/{bin,lib,config,docs,tests}
+cd claude-code-sync
 
 # Create main executable
-touch bin/claude-sync
-chmod +x bin/claude-sync
+touch bin/claude-code-sync
+chmod +x bin/claude-code-sync
 
 # Create library files
 touch lib/{utils,encryption,backup,restore,conflict}.sh
@@ -278,7 +278,7 @@ decrypt_archive() {
 }
 
 verify_encryption() {
-    local test_file="/tmp/claude-sync-test-$$"
+    local test_file="/tmp/claude-code-sync-test-$$"
     local encrypted_file="${test_file}.gpg"
     local decrypted_file="${test_file}.dec"
 
@@ -395,14 +395,14 @@ source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/encryption.sh"
 
 readonly CLAUDE_DIR="$HOME/.claude"
-readonly SYNC_DIR="$HOME/.claude-sync"
+readonly SYNC_DIR="$HOME/.claude-code-sync"
 readonly STORAGE_DIR="$SYNC_DIR/storage"
 readonly CURRENT_DIR="$STORAGE_DIR/current"
 readonly SNAPSHOTS_DIR="$STORAGE_DIR/snapshots"
 readonly TMP_DIR="$SYNC_DIR/tmp"
 
 backup_init() {
-    log_info "Initializing claude-sync backup system"
+    log_info "Initializing claude-code-sync backup system"
 
     # Create directory structure
     ensure_directory "$SYNC_DIR"
@@ -743,13 +743,13 @@ resolve_conflicts_interactive() {
 - [ ] File comparison accurate
 
 #### Step 1.7: Main CLI (Day 6-7)
-**File**: `bin/claude-sync`
+**File**: `bin/claude-code-sync`
 
 **Implementation**:
 ```bash
 #!/bin/bash
 
-# claude-sync - CLI Configuration Management Tool
+# claude-code-sync - CLI Configuration Management Tool
 # Version 1.0.0
 
 set -euo pipefail
@@ -771,12 +771,12 @@ VERBOSE=false
 QUIET=false
 
 show_version() {
-    echo "claude-sync v1.0.0"
+    echo "claude-code-sync v1.0.0"
 }
 
 show_help() {
     cat <<EOF
-Usage: claude-sync <command> [options]
+Usage: claude-code-sync <command> [options]
 
 Commands:
     init                Initialize backup system
@@ -793,11 +793,11 @@ Options:
     -h, --help          Show help
 
 Examples:
-    claude-sync init
-    claude-sync backup
-    claude-sync backup --dry-run
-    claude-sync restore --interactive
-    claude-sync status
+    claude-code-sync init
+    claude-code-sync backup
+    claude-code-sync backup --dry-run
+    claude-code-sync restore --interactive
+    claude-code-sync status
 
 EOF
 }
@@ -840,12 +840,12 @@ cmd_restore() {
 }
 
 cmd_status() {
-    log_info "=== claude-sync Status ==="
+    log_info "=== claude-code-sync Status ==="
     log_info "Machine: $(get_hostname)"
-    log_info "Sync directory: $HOME/.claude-sync"
+    log_info "Sync directory: $HOME/.claude-code-sync"
 
-    if [ -f "$HOME/.claude-sync/storage/current/latest-backup.tar.gz.gpg" ]; then
-        local backup_size=$(du -h "$HOME/.claude-sync/storage/current/latest-backup.tar.gz.gpg" | awk '{print $1}')
+    if [ -f "$HOME/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg" ]; then
+        local backup_size=$(du -h "$HOME/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg" | awk '{print $1}')
         log_info "Latest backup: $backup_size"
     else
         log_warn "No backup found"
@@ -885,7 +885,7 @@ main() {
             show_version
             ;;
         *)
-            log_error "Unknown command: $command\nRun 'claude-sync help' for usage"
+            log_error "Unknown command: $command\nRun 'claude-code-sync help' for usage"
             ;;
     esac
 }
@@ -915,15 +915,15 @@ main "$@"
 
 **Create README**:
 ```markdown
-# claude-sync
+# claude-code-sync
 
 CLI utility for backing up and restoring Claude Code configurations.
 
 ## Installation
 
 ```bash
-git clone https://github.com/user/claude-sync.git
-cd claude-sync
+git clone https://github.com/user/claude-code-sync.git
+cd claude-code-sync
 ./install.sh
 ```
 
@@ -931,13 +931,13 @@ cd claude-sync
 
 ```bash
 # Initialize
-claude-sync init
+claude-code-sync init
 
 # Backup
-claude-sync backup
+claude-code-sync backup
 
 # Restore
-claude-sync restore
+claude-code-sync restore
 ```
 
 ## Documentation
@@ -1088,8 +1088,8 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 ## Success Metrics
 
 ### Phase 1 Success Criteria
-- [ ] `claude-sync backup` creates encrypted backup in < 5 seconds
-- [ ] `claude-sync restore` successfully restores files
+- [ ] `claude-code-sync backup` creates encrypted backup in < 5 seconds
+- [ ] `claude-code-sync restore` successfully restores files
 - [ ] Password prompt is secure (no echo)
 - [ ] Conflicts are detected correctly
 - [ ] All tests pass

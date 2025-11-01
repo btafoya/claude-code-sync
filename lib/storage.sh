@@ -6,14 +6,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/utils.sh"
 
 # Use same directory configuration
-if [ -z "${CLAUDE_SYNC_DIRS_SET:-}" ]; then
+if [ -z "${CLAUDE_CODE_SYNC_DIRS_SET:-}" ]; then
     readonly CLAUDE_DIR="$HOME/.claude"
-    readonly SYNC_DIR="$HOME/.claude-sync"
+    readonly SYNC_DIR="$HOME/.claude-code-sync"
     readonly STORAGE_DIR="$SYNC_DIR/storage"
     readonly CURRENT_DIR="$STORAGE_DIR/current"
     readonly SNAPSHOTS_DIR="$STORAGE_DIR/snapshots"
     readonly GIT_REMOTE_DIR="$SYNC_DIR/git-remote"
-    readonly CLAUDE_SYNC_DIRS_SET=1
+    readonly CLAUDE_CODE_SYNC_DIRS_SET=1
 fi
 
 # Git backend functions
@@ -55,13 +55,13 @@ storage_git_init() {
         log_info "Initializing new git repository"
         cd "$GIT_REMOTE_DIR"
         git init
-        git config user.name "claude-sync"
-        git config user.email "claude-sync@localhost"
+        git config user.name "claude-code-sync"
+        git config user.email "claude-code-sync@localhost"
 
         # Create initial commit
         echo "# Claude Code Configuration Backup" > README.md
         echo "" >> README.md
-        echo "Encrypted backups managed by claude-sync" >> README.md
+        echo "Encrypted backups managed by claude-code-sync" >> README.md
         git add README.md
         git commit -m "Initial commit"
 
@@ -82,7 +82,7 @@ storage_git_save() {
     local message="${2:-Backup from $(get_hostname) - $(date)}"
 
     if [ ! -d "$GIT_REMOTE_DIR/.git" ]; then
-        log_error "Git repository not initialized. Run: claude-sync init --git <repo-url>"
+        log_error "Git repository not initialized. Run: claude-code-sync init --git <repo-url>"
     fi
 
     log_info "Saving backup to git repository"

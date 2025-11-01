@@ -1,10 +1,10 @@
-# claude-sync: Architecture & Design
+# claude-code-sync: Architecture & Design
 
 ## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     claude-sync CLI                          │
+│                     claude-code-sync CLI                          │
 │  (User Interface - bash commands & interactive prompts)      │
 └──────────────┬──────────────────────────────────────────────┘
                │
@@ -42,7 +42,7 @@
 
 ## Component Architecture
 
-### 1. CLI Layer (`bin/claude-sync`)
+### 1. CLI Layer (`bin/claude-code-sync`)
 
 **Responsibilities**:
 - Parse command-line arguments
@@ -229,11 +229,11 @@ storage_ssh_*()          # SSH/rsync
 **Backend: Git**
 ```bash
 storage_git_init() {
-    git clone "$repo_url" ~/.claude-sync/git-remote
+    git clone "$repo_url" ~/.claude-code-sync/git-remote
 }
 
 storage_git_save() {
-    cd ~/.claude-sync/git-remote
+    cd ~/.claude-code-sync/git-remote
     cp "$backup_file" .
     git add .
     git commit -m "Backup from $(hostname) - $(date)"
@@ -241,7 +241,7 @@ storage_git_save() {
 }
 
 storage_git_load() {
-    cd ~/.claude-sync/git-remote
+    cd ~/.claude-code-sync/git-remote
     git pull origin main
 }
 ```
@@ -249,11 +249,11 @@ storage_git_load() {
 **Backend: Local**
 ```bash
 storage_local_save() {
-    cp "$backup_file" ~/.claude-sync/storage/current/
+    cp "$backup_file" ~/.claude-code-sync/storage/current/
 }
 
 storage_local_load() {
-    cp ~/.claude-sync/storage/current/"$backup_file" .
+    cp ~/.claude-code-sync/storage/current/"$backup_file" .
 }
 ```
 
@@ -261,12 +261,12 @@ storage_local_load() {
 ```bash
 storage_ssh_save() {
     local remote=$1
-    rsync -avz --progress "$backup_file" "$remote:~/.claude-sync/incoming/"
+    rsync -avz --progress "$backup_file" "$remote:~/.claude-code-sync/incoming/"
 }
 
 storage_ssh_load() {
     local remote=$1
-    rsync -avz --progress "$remote:~/.claude-sync/storage/current/" .
+    rsync -avz --progress "$remote:~/.claude-code-sync/storage/current/" .
 }
 ```
 
@@ -442,9 +442,9 @@ storage_ssh_load() {
 ### Project Structure
 
 ```
-claude-sync/
+claude-code-sync/
 ├── bin/
-│   └── claude-sync              # Main CLI entry point
+│   └── claude-code-sync              # Main CLI entry point
 │
 ├── lib/
 │   ├── backup.sh               # Backup operations
@@ -481,7 +481,7 @@ claude-sync/
 ### User Data Structure
 
 ```
-~/.claude-sync/
+~/.claude-code-sync/
 ├── config/
 │   ├── sync.conf              # User preferences
 │   ├── machines.conf          # Registered machines
@@ -523,10 +523,10 @@ claude-sync/
 
 ## Configuration File Formats
 
-### `~/.claude-sync/config/sync.conf`
+### `~/.claude-code-sync/config/sync.conf`
 
 ```bash
-# claude-sync configuration
+# claude-code-sync configuration
 
 # Storage backend (git|local|ssh)
 SYNC_BACKEND="git"
@@ -559,7 +559,7 @@ COLOR_OUTPUT="true"
 LOG_LEVEL="info"
 ```
 
-### `~/.claude-sync/config/machines.conf`
+### `~/.claude-code-sync/config/machines.conf`
 
 ```bash
 # Registered machines
@@ -639,9 +639,9 @@ gpg --decrypt backup.gpg > backup.tar.gz
 
 ```bash
 # File permissions
-chmod 700 ~/.claude-sync          # Owner only
-chmod 600 ~/.claude-sync/config/* # Owner read/write only
-chmod 600 ~/.claude-sync/logs/*   # Owner read/write only
+chmod 700 ~/.claude-code-sync          # Owner only
+chmod 600 ~/.claude-code-sync/config/* # Owner read/write only
+chmod 600 ~/.claude-code-sync/logs/*   # Owner read/write only
 
 # Git repository
 # Must be private repository
@@ -791,12 +791,12 @@ apply_custom_filter() {
 
 ```bash
 # Pre/post backup hooks
-~/.claude-sync/hooks/pre-backup.sh
-~/.claude-sync/hooks/post-backup.sh
+~/.claude-code-sync/hooks/pre-backup.sh
+~/.claude-code-sync/hooks/post-backup.sh
 
 # Pre/post restore hooks
-~/.claude-sync/hooks/pre-restore.sh
-~/.claude-sync/hooks/post-restore.sh
+~/.claude-code-sync/hooks/pre-restore.sh
+~/.claude-code-sync/hooks/post-restore.sh
 ```
 
 ---

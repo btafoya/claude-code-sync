@@ -1,4 +1,4 @@
-# claude-sync Test Report
+# claude-code-sync Test Report
 
 **Date**: 2025-11-01
 **Version**: v1.1.0
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Complete test suite validation for claude-sync utility with **100% test pass rate** across all test categories.
+Complete test suite validation for claude-code-sync utility with **100% test pass rate** across all test categories.
 
 **Overall Results**:
 - **Total Tests**: 16
@@ -98,7 +98,7 @@ Complete test suite validation for claude-sync utility with **100% test pass rat
 
 **Quality Metrics**:
 - **Execution Time**: < 1 second
-- **Test Isolation**: Complete (uses `/tmp/claude-sync-test-$$`)
+- **Test Isolation**: Complete (uses `/tmp/claude-code-sync-test-$$`)
 - **Cleanup**: Automatic temporary file removal
 - **Coverage**: Full snapshot lifecycle
 
@@ -119,7 +119,7 @@ Complete test suite validation for claude-sync utility with **100% test pass rat
 - GPG encryption: Requires interactive password
 - Decryption: Requires password verification
 - Checksum generation: Indirectly tested
-- **Note**: Encryption tested via manual `claude-sync verify` command
+- **Note**: Encryption tested via manual `claude-code-sync verify` command
 
 ### lib/backup.sh
 **Coverage**: ⚠️ **INTEGRATION TESTED**
@@ -138,7 +138,7 @@ Complete test suite validation for claude-sync utility with **100% test pass rat
 **Coverage**: ⚠️ **MANUAL TESTING REQUIRED**
 - Conflict detection: Logic validated
 - Interactive resolution: Requires user interaction
-- **Note**: Tested via manual `claude-sync restore --interactive`
+- **Note**: Tested via manual `claude-code-sync restore --interactive`
 
 ### lib/storage.sh
 **Coverage**: ✅ **HIGH**
@@ -157,7 +157,7 @@ Complete test suite validation for claude-sync utility with **100% test pass rat
 - Name sanitization: Tested
 - Auto-naming: Tested
 
-### bin/claude-sync
+### bin/claude-code-sync
 **Coverage**: ✅ **SYNTAX VALIDATED**
 - Command parsing: Syntax checked
 - Help system: Validated
@@ -169,9 +169,9 @@ Complete test suite validation for claude-sync utility with **100% test pass rat
 ## Test Environment
 
 ### Isolation Strategy
-- **Test Directory**: `/tmp/claude-sync-test-$$` (unique per run)
+- **Test Directory**: `/tmp/claude-code-sync-test-$$` (unique per run)
 - **Home Override**: `HOME=$TEST_DIR/home`
-- **Configuration**: Isolated `.claude-sync` directory
+- **Configuration**: Isolated `.claude-code-sync` directory
 - **Cleanup**: Automatic removal after tests
 
 ### Dependencies Verified
@@ -188,7 +188,7 @@ Complete test suite validation for claude-sync utility with **100% test pass rat
 
 ### Syntax Validation
 ```bash
-✓ bin/claude-sync        - Valid bash syntax
+✓ bin/claude-code-sync        - Valid bash syntax
 ✓ lib/utils.sh           - Valid bash syntax
 ✓ lib/encryption.sh      - Valid bash syntax
 ✓ lib/backup.sh          - Valid bash syntax
@@ -231,7 +231,7 @@ The following features require manual testing due to interactive nature:
 
 ### Encryption Verification
 ```bash
-$ claude-sync verify
+$ claude-code-sync verify
 [INFO] Testing GPG encryption
 [INFO] ✓ GPG is installed and functional
 [INFO] ✓ Encryption test successful
@@ -240,14 +240,14 @@ $ claude-sync verify
 
 ### Backup/Restore Workflow
 ```bash
-$ claude-sync init
+$ claude-code-sync init
 [INFO] ✓ Backup system initialized
 
-$ claude-sync backup
+$ claude-code-sync backup
 [INFO] Creating encrypted backup...
 [INFO] ✓ Backup Complete
 
-$ claude-sync restore --interactive
+$ claude-code-sync restore --interactive
 [INFO] Interactive conflict resolution enabled
 [INFO] ✓ Restore complete
 ```
@@ -309,7 +309,7 @@ All tests pass successfully with no known issues or failures.
 ./tests/test_integration.sh
 
 # Quick validation
-bash -n bin/claude-sync lib/*.sh tests/*.sh
+bash -n bin/claude-code-sync lib/*.sh tests/*.sh
 ```
 
 ### Individual Test Categories
@@ -321,20 +321,20 @@ bash -n bin/claude-sync lib/*.sh tests/*.sh
 ./tests/test_integration.sh
 
 # Syntax validation
-bash -n bin/claude-sync
+bash -n bin/claude-code-sync
 ```
 
 ### Manual Verification
 ```bash
 # Encryption test
-claude-sync verify
+claude-code-sync verify
 
 # Full workflow
-claude-sync init
-claude-sync backup --dry-run
-claude-sync backup
-claude-sync status
-claude-sync restore --dry-run
+claude-code-sync init
+claude-code-sync backup --dry-run
+claude-code-sync backup
+claude-code-sync status
+claude-code-sync restore --dry-run
 ```
 
 ---
@@ -374,7 +374,7 @@ jobs:
 
 ## Conclusion
 
-The **claude-sync v1.1.0** test suite demonstrates:
+The **claude-code-sync v1.1.0** test suite demonstrates:
 
 ✅ **100% test pass rate** across all automated tests
 ✅ **Complete syntax validation** for all shell scripts

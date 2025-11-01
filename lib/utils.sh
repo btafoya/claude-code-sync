@@ -2,13 +2,13 @@
 # lib/utils.sh - Shared utilities and logging functions
 
 # Color codes for terminal output (only set if not already set)
-if [ -z "${CLAUDE_SYNC_COLORS_SET:-}" ]; then
+if [ -z "${CLAUDE_CODE_SYNC_COLORS_SET:-}" ]; then
     readonly RED='\033[0;31m'
     readonly GREEN='\033[0;32m'
     readonly YELLOW='\033[1;33m'
     readonly BLUE='\033[0;34m'
     readonly NC='\033[0m' # No Color
-    readonly CLAUDE_SYNC_COLORS_SET=1
+    readonly CLAUDE_CODE_SYNC_COLORS_SET=1
 fi
 
 # Check if colors should be disabled

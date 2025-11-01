@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installation script for claude-sync
+# Installation script for claude-code-sync
 
 set -e
 
@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 echo ""
 echo "═══════════════════════════════════════"
-echo "  claude-sync Installation"
+echo "  claude-code-sync Installation"
 echo "═══════════════════════════════════════"
 echo ""
 
@@ -59,19 +59,19 @@ INSTALL_DIR="$HOME/.local/bin"
 mkdir -p "$INSTALL_DIR"
 
 # Copy executable
-echo "Installing claude-sync to $INSTALL_DIR..."
-cp "$SCRIPT_DIR/bin/claude-sync" "$INSTALL_DIR/claude-sync"
-chmod +x "$INSTALL_DIR/claude-sync"
+echo "Installing claude-code-sync to $INSTALL_DIR..."
+cp "$SCRIPT_DIR/bin/claude-code-sync" "$INSTALL_DIR/claude-code-sync"
+chmod +x "$INSTALL_DIR/claude-code-sync"
 
 # Create lib directory
-LIB_INSTALL_DIR="$HOME/.local/lib/claude-sync"
+LIB_INSTALL_DIR="$HOME/.local/lib/claude-code-sync"
 mkdir -p "$LIB_INSTALL_DIR"
 
 echo "Installing libraries to $LIB_INSTALL_DIR..."
 cp -r "$SCRIPT_DIR/lib"/* "$LIB_INSTALL_DIR/"
 
 # Update paths in installed executable
-sed -i "s|LIB_DIR=.*|LIB_DIR=\"$LIB_INSTALL_DIR\"|" "$INSTALL_DIR/claude-sync"
+sed -i "s|LIB_DIR=.*|LIB_DIR=\"$LIB_INSTALL_DIR\"|" "$INSTALL_DIR/claude-code-sync"
 
 # Check if ~/.local/bin is in PATH
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
@@ -90,12 +90,12 @@ echo ""
 echo -e "${GREEN}✓ Installation complete!${NC}"
 echo ""
 echo "Verify installation:"
-echo "  claude-sync --version"
+echo "  claude-code-sync --version"
 echo ""
 echo "Get started:"
-echo "  claude-sync init"
-echo "  claude-sync backup"
+echo "  claude-code-sync init"
+echo "  claude-code-sync backup"
 echo ""
 echo "For help:"
-echo "  claude-sync help"
+echo "  claude-code-sync help"
 echo ""

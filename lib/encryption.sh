@@ -135,7 +135,7 @@ decrypt_archive() {
 
 # Verify encryption works (round-trip test)
 verify_encryption() {
-    local test_file="/tmp/claude-sync-test-$$"
+    local test_file="/tmp/claude-code-sync-test-$$"
     local encrypted_file="${test_file}.gpg"
     local decrypted_file="${test_file}.dec"
 

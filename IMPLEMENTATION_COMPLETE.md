@@ -1,4 +1,4 @@
-# Implementation Complete - claude-sync Phase 1
+# Implementation Complete - claude-code-sync Phase 1
 
 ## ✅ Project Status
 
@@ -48,7 +48,7 @@ All planned Phase 1 deliverables have been implemented and tested.
    - Safety backup before restore
    - Full restore workflow
 
-6. **bin/claude-sync** ✅
+6. **bin/claude-code-sync** ✅
    - Complete CLI interface
    - Command routing and flag parsing
    - Help and version information
@@ -128,8 +128,8 @@ Tests: 7/7 passed
 
 ### CLI Commands Tested
 ```
-✓ claude-sync --version
-✓ claude-sync --help
+✓ claude-code-sync --version
+✓ claude-code-sync --help
 ✓ All commands available and documented
 ```
 
@@ -151,32 +151,32 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ```bash
 # Initialize backup system
-claude-sync init
+claude-code-sync init
 
 # Create encrypted backup (will prompt for password)
-claude-sync backup
+claude-code-sync backup
 
 # View status
-claude-sync status
+claude-code-sync status
 
 # Restore on another machine (will prompt for password)
-claude-sync restore
+claude-code-sync restore
 ```
 
 ### Advanced Usage
 
 ```bash
 # Preview backup without executing
-claude-sync backup --dry-run
+claude-code-sync backup --dry-run
 
 # Restore without interactive prompts (auto-resolve)
-claude-sync restore --no-interactive
+claude-code-sync restore --no-interactive
 
 # Verbose output
-claude-sync backup --verbose
+claude-code-sync backup --verbose
 
 # Test encryption
-claude-sync verify
+claude-code-sync verify
 ```
 
 ---
@@ -192,9 +192,9 @@ claude-sync verify
 
 ### Directory Structure
 ```
-claude-sync/
+claude-code-sync/
 ├── bin/
-│   └── claude-sync              # Main CLI (360 lines)
+│   └── claude-code-sync              # Main CLI (360 lines)
 ├── lib/
 │   ├── utils.sh                 # Utilities (150 lines)
 │   ├── encryption.sh            # Encryption (165 lines)
@@ -236,7 +236,7 @@ claude-sync/
 - ✅ Confirmation prompt on entry
 
 ### File Permissions
-- ✅ ~/.claude-sync: 700 (owner only)
+- ✅ ~/.claude-code-sync: 700 (owner only)
 - ✅ Config files: 600 (owner read/write)
 - ✅ Logs: 700 (owner only)
 
@@ -277,7 +277,7 @@ claude-sync/
 ### For Users (Immediate)
 
 1. **Test the Tool**
-   - Run `claude-sync init`
+   - Run `claude-code-sync init`
    - Create a backup
    - Test restore on same machine
 
@@ -313,7 +313,7 @@ This project demonstrates:
 
 All core functionality is working as designed. If issues are discovered:
 
-1. Check logs in `~/.claude-sync/logs/`
+1. Check logs in `~/.claude-code-sync/logs/`
 2. Run with `--verbose` for debugging
 3. Use `--dry-run` to preview operations
 4. Verify dependencies are installed

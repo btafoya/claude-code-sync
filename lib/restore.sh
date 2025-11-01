@@ -8,13 +8,13 @@ source "$SCRIPT_DIR/encryption.sh"
 source "$SCRIPT_DIR/conflict.sh"
 
 # Use same directory configuration as backup.sh (only set if not already set)
-if [ -z "${CLAUDE_SYNC_DIRS_SET:-}" ]; then
+if [ -z "${CLAUDE_CODE_SYNC_DIRS_SET:-}" ]; then
     readonly CLAUDE_DIR="$HOME/.claude"
-    readonly SYNC_DIR="$HOME/.claude-sync"
+    readonly SYNC_DIR="$HOME/.claude-code-sync"
     readonly STORAGE_DIR="$SYNC_DIR/storage"
     readonly CURRENT_DIR="$STORAGE_DIR/current"
     readonly TMP_DIR="$SYNC_DIR/tmp"
-    readonly CLAUDE_SYNC_DIRS_SET=1
+    readonly CLAUDE_CODE_SYNC_DIRS_SET=1
 fi
 
 # Verify backup file exists and is valid
@@ -57,7 +57,7 @@ restore_full() {
     # Check backup exists
     local backup_file="$CURRENT_DIR/latest-backup.tar.gz.gpg"
     if [ ! -f "$backup_file" ]; then
-        log_error "No backup found at: $backup_file\nPlease create a backup first with: claude-sync backup"
+        log_error "No backup found at: $backup_file\nPlease create a backup first with: claude-code-sync backup"
     fi
 
     # Show backup info

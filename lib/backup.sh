@@ -12,19 +12,19 @@ if [ -f "$SCRIPT_DIR/storage.sh" ]; then
 fi
 
 # Directory configuration (only set if not already set)
-if [ -z "${CLAUDE_SYNC_DIRS_SET:-}" ]; then
+if [ -z "${CLAUDE_CODE_SYNC_DIRS_SET:-}" ]; then
     readonly CLAUDE_DIR="$HOME/.claude"
-    readonly SYNC_DIR="$HOME/.claude-sync"
+    readonly SYNC_DIR="$HOME/.claude-code-sync"
     readonly STORAGE_DIR="$SYNC_DIR/storage"
     readonly CURRENT_DIR="$STORAGE_DIR/current"
     readonly SNAPSHOTS_DIR="$STORAGE_DIR/snapshots"
     readonly TMP_DIR="$SYNC_DIR/tmp"
-    readonly CLAUDE_SYNC_DIRS_SET=1
+    readonly CLAUDE_CODE_SYNC_DIRS_SET=1
 fi
 
 # Initialize backup system
 backup_init() {
-    log_info "Initializing claude-sync backup system"
+    log_info "Initializing claude-code-sync backup system"
 
     # Create directory structure
     ensure_directory "$SYNC_DIR" 700

@@ -1,4 +1,4 @@
-# claude-sync
+# claude-code-sync
 
 > CLI utility for backing up, restoring, and synchronizing Claude Code configurations across multiple machines.
 
@@ -10,7 +10,7 @@
 
 ## Overview
 
-**claude-sync** is a comprehensive CLI tool designed to manage your Claude Code configurations across multiple Ubuntu machines. It provides encrypted backups, multiple synchronization strategies, intelligent conflict resolution, and versioned snapshots—all wrapped in a simple, intuitive command-line interface.
+**claude-code-sync** is a comprehensive CLI tool designed to manage your Claude Code configurations across multiple Ubuntu machines. It provides encrypted backups, multiple synchronization strategies, intelligent conflict resolution, and versioned snapshots—all wrapped in a simple, intuitive command-line interface.
 
 ### Key Features
 
@@ -37,39 +37,39 @@ cd claude-code-sync
 ./install.sh
 
 # Verify installation
-claude-sync --version
+claude-code-sync --version
 ```
 
-**Note**: Dependencies will be automatically detected and installed when you first run claude-sync.
+**Note**: Dependencies will be automatically detected and installed when you first run claude-code-sync.
 
 ### First Backup
 
 ```bash
 # Initialize the backup system (will check and install dependencies)
-claude-sync init
+claude-code-sync init
 
 # Create your first encrypted backup
-claude-sync backup
+claude-code-sync backup
 
 # View status
-claude-sync status
+claude-code-sync status
 ```
 
 ### Restore on Another Machine
 
 ```bash
 # Initialize on the new machine
-claude-sync init
+claude-code-sync init
 
 # Restore from backup (interactive mode)
-claude-sync restore --interactive
+claude-code-sync restore --interactive
 ```
 
 ---
 
 ## What Gets Backed Up?
 
-claude-sync manages configurations from your `~/.claude/` directory:
+claude-code-sync manages configurations from your `~/.claude/` directory:
 
 - ✅ **Global Configs** - CLAUDE.md, RULES.md, PRINCIPLES.md, MODE_*.md
 - ✅ **MCP Servers** - All MCP server configurations and connections
@@ -84,19 +84,19 @@ claude-sync manages configurations from your `~/.claude/` directory:
 
 ```bash
 # Initialize backup system
-claude-sync init [--git <repo>] [--local] [--all]
+claude-code-sync init [--git <repo>] [--local] [--all]
 
 # Create encrypted backup
-claude-sync backup [--dry-run] [--verbose]
+claude-code-sync backup [--dry-run] [--verbose]
 
 # Restore from backup
-claude-sync restore [--dry-run] [--interactive]
+claude-code-sync restore [--dry-run] [--interactive]
 
 # View synchronization status
-claude-sync status
+claude-code-sync status
 
 # Show help
-claude-sync help
+claude-code-sync help
 ```
 
 ### Advanced Usage
@@ -105,52 +105,52 @@ claude-sync help
 
 ```bash
 # Create a named snapshot before making changes
-claude-sync snapshot create "before-experiment"
+claude-code-sync snapshot create "before-experiment"
 
 # List all snapshots
-claude-sync snapshot list
+claude-code-sync snapshot list
 
 # Restore from a specific snapshot
-claude-sync snapshot restore "before-experiment"
+claude-code-sync snapshot restore "before-experiment"
 
 # Compare two snapshots
-claude-sync snapshot diff "morning" "evening"
+claude-code-sync snapshot diff "morning" "evening"
 ```
 
 #### Selective Backup/Restore
 
 ```bash
 # Backup only MCP configurations
-claude-sync backup --include mcp
+claude-code-sync backup --include mcp
 
 # Restore only slash commands
-claude-sync restore --only commands
+claude-code-sync restore --only commands
 
 # Backup specific files
-claude-sync backup --files CLAUDE.md,RULES.md
+claude-code-sync backup --files CLAUDE.md,RULES.md
 ```
 
 #### Git Repository Sync
 
 ```bash
 # Initialize with git repository
-claude-sync init --git git@github.com:user/claude-configs.git
+claude-code-sync init --git git@github.com:user/claude-configs.git
 
 # Backup (automatically commits and pushes)
-claude-sync backup
+claude-code-sync backup
 
 # Sync bidirectionally
-claude-sync sync --git
+claude-code-sync sync --git
 ```
 
 #### Direct Machine Sync
 
 ```bash
 # Sync directly to another machine
-claude-sync sync --remote user@work-laptop
+claude-code-sync sync --remote user@work-laptop
 
 # Compare configurations with remote
-claude-sync diff --machine work-laptop
+claude-code-sync diff --machine work-laptop
 ```
 
 ### Global Options
@@ -166,15 +166,15 @@ All commands support these flags:
 
 ## Synchronization Methods
 
-claude-sync supports three sync strategies:
+claude-code-sync supports three sync strategies:
 
 ### 1. Git Repository Sync (Recommended)
 
 Perfect for version control and cloud backup:
 
 ```bash
-claude-sync init --git git@github.com:user/claude-configs.git
-claude-sync backup  # Auto-commits and pushes
+claude-code-sync init --git git@github.com:user/claude-configs.git
+claude-code-sync backup  # Auto-commits and pushes
 ```
 
 **Pros**: Version history, cloud backup, easy rollback
@@ -185,9 +185,9 @@ claude-sync backup  # Auto-commits and pushes
 For air-gapped machines or manual control:
 
 ```bash
-claude-sync export ~/backup.enc
+claude-code-sync export ~/backup.enc
 # Transfer file manually
-claude-sync import ~/backup.enc
+claude-code-sync import ~/backup.enc
 ```
 
 **Pros**: Full control, works offline, no cloud dependency
@@ -198,7 +198,7 @@ claude-sync import ~/backup.enc
 For real-time synchronization between online machines:
 
 ```bash
-claude-sync sync --remote user@work-laptop
+claude-code-sync sync --remote user@work-laptop
 ```
 
 **Pros**: Fast, real-time sync, direct transfer
@@ -231,10 +231,10 @@ All backups are encrypted using **AES-256-GCM** via GPG:
 
 ### Configuration Files
 
-claude-sync stores its configuration in `~/.claude-sync/`:
+claude-code-sync stores its configuration in `~/.claude-code-sync/`:
 
 ```
-~/.claude-sync/
+~/.claude-code-sync/
 ├── config/
 │   ├── sync.conf           # Sync preferences
 │   └── machines.conf       # Machine registry
@@ -265,7 +265,7 @@ export CLAUDE_THEME="dark"
 
 ## Conflict Resolution
 
-When restoring, claude-sync detects conflicts and offers options:
+When restoring, claude-code-sync detects conflicts and offers options:
 
 ```
 Conflict detected: CLAUDE.md
@@ -291,41 +291,41 @@ Your choice:
 
 ```bash
 # Morning: Start work
-claude-sync sync --git
+claude-code-sync sync --git
 
 # Make changes to Claude Code configs
 # ...
 
 # Evening: Backup before leaving
-claude-sync backup
+claude-code-sync backup
 ```
 
 ### Before Major Changes
 
 ```bash
 # Create snapshot
-claude-sync snapshot create "before-mcp-update"
+claude-code-sync snapshot create "before-mcp-update"
 
 # Make changes
 # ...
 
 # If something breaks, rollback
-claude-sync snapshot restore "before-mcp-update"
+claude-code-sync snapshot restore "before-mcp-update"
 ```
 
 ### Multi-Machine Setup
 
 ```bash
 # On work laptop
-claude-sync init --git git@github.com:user/claude-configs.git
-claude-sync backup
+claude-code-sync init --git git@github.com:user/claude-configs.git
+claude-code-sync backup
 
 # On home desktop
-claude-sync init --git git@github.com:user/claude-configs.git
-claude-sync restore --interactive
+claude-code-sync init --git git@github.com:user/claude-configs.git
+claude-code-sync restore --interactive
 
 # Keep in sync
-claude-sync sync --git
+claude-code-sync sync --git
 ```
 
 ---
@@ -336,9 +336,9 @@ claude-sync sync --git
 
 **Issue**: Missing dependencies (gpg, tar, etc.)
 
-claude-sync will automatically detect and offer to install missing dependencies:
+claude-code-sync will automatically detect and offer to install missing dependencies:
 ```bash
-claude-sync init
+claude-code-sync init
 # Prompts: "Install missing packages using apt? (gnupg tar gzip coreutils rsync)"
 # Answer 'y' to automatically install
 ```
@@ -351,8 +351,8 @@ sudo apt install gnupg tar gzip coreutils rsync jq git
 
 **Issue**: `Permission denied` on backup
 ```bash
-chmod 700 ~/.claude-sync
-chmod 600 ~/.claude-sync/config/*
+chmod 700 ~/.claude-code-sync
+chmod 600 ~/.claude-code-sync/config/*
 ```
 
 **Issue**: Decryption fails with "bad password"
@@ -370,15 +370,15 @@ chmod 600 ~/.claude-sync/config/*
 Enable verbose logging for troubleshooting:
 
 ```bash
-claude-sync backup --verbose
-claude-sync restore --dry-run --verbose
+claude-code-sync backup --verbose
+claude-code-sync restore --dry-run --verbose
 ```
 
 Check logs for detailed error information:
 
 ```bash
-tail -f ~/.claude-sync/logs/sync.log
-tail -f ~/.claude-sync/logs/errors.log
+tail -f ~/.claude-code-sync/logs/sync.log
+tail -f ~/.claude-code-sync/logs/errors.log
 ```
 
 ---
@@ -393,7 +393,7 @@ tail -f ~/.claude-sync/logs/errors.log
 
 ### Dependencies
 
-**Automatic Installation**: claude-sync will automatically detect missing dependencies and offer to install them when you first run any command.
+**Automatic Installation**: claude-code-sync will automatically detect missing dependencies and offer to install them when you first run any command.
 
 **Required packages**:
 - `gpg` (gnupg) - Encryption/decryption
@@ -415,10 +415,10 @@ sudo apt install gnupg tar gzip coreutils rsync jq git
 
 **Automatic installation** (recommended):
 
-Just run any claude-sync command, and it will prompt you to install missing packages:
+Just run any claude-code-sync command, and it will prompt you to install missing packages:
 
 ```bash
-claude-sync init
+claude-code-sync init
 # Will detect missing dependencies and offer to install them
 ```
 
@@ -439,8 +439,8 @@ claude-sync init
 
 - Check the [documentation](#documentation)
 - Review [troubleshooting](#troubleshooting)
-- Search [existing issues](https://github.com/yourusername/claude-sync/issues)
-- Open a [new issue](https://github.com/yourusername/claude-sync/issues/new)
+- Search [existing issues](https://github.com/yourusername/claude-code-sync/issues)
+- Open a [new issue](https://github.com/yourusername/claude-code-sync/issues/new)
 
 ---
 
@@ -497,7 +497,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you find this tool useful, please:
 
 - ⭐ Star the repository
-- 🐛 Report bugs via [issues](https://github.com/yourusername/claude-sync/issues)
+- 🐛 Report bugs via [issues](https://github.com/yourusername/claude-code-sync/issues)
 - 💡 Suggest features
 - 📖 Improve documentation
 - 🤝 Contribute code

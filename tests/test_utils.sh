@@ -97,7 +97,7 @@ test_command_exists() {
 
 # Test ensure_directory
 test_ensure_directory() {
-    local test_dir="/tmp/claude-sync-test-$$"
+    local test_dir="/tmp/claude-code-sync-test-$$"
 
     ensure_directory "$test_dir"
 
@@ -115,7 +115,7 @@ test_ensure_directory() {
 
 # Test count_files
 test_count_files() {
-    local test_dir="/tmp/claude-sync-test-$$"
+    local test_dir="/tmp/claude-code-sync-test-$$"
     mkdir -p "$test_dir"
     touch "$test_dir/file1" "$test_dir/file2" "$test_dir/file3"
 

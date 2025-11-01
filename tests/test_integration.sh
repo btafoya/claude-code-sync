@@ -8,12 +8,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Setup test environment BEFORE sourcing modules
-TEST_DIR="/tmp/claude-sync-test-$$"
+TEST_DIR="/tmp/claude-code-sync-test-$$"
 HOME="$TEST_DIR/home"
 export TEST_DIR HOME
 
 mkdir -p "$HOME/.claude"
-mkdir -p "$HOME/.claude-sync"
+mkdir -p "$HOME/.claude-code-sync"
 
 # Create test Claude files
 echo "# Test CLAUDE.md" > "$HOME/.claude/CLAUDE.md"
@@ -56,7 +56,7 @@ test_git_init() {
 
     # Initialize with local path
     if storage_git_init "$TEST_DIR/test-repo.git" 2>/dev/null; then
-        if [ -d "$HOME/.claude-sync/git-remote/.git" ]; then
+        if [ -d "$HOME/.claude-code-sync/git-remote/.git" ]; then
             test_passed "$test_name"
         else
             test_failed "$test_name" "Git directory not created"
@@ -71,16 +71,16 @@ test_snapshot_create() {
     local test_name="Snapshot creation"
 
     # Create a mock backup first
-    mkdir -p "$HOME/.claude-sync/storage/current"
-    echo "test backup" > "$HOME/.claude-sync/storage/current/latest-backup.tar.gz.gpg"
-    echo "checksum123" > "$HOME/.claude-sync/storage/current/latest-backup.checksum"
-    echo "$(date -Iseconds)" > "$HOME/.claude-sync/storage/current/latest-backup.timestamp"
-    echo "test-host" > "$HOME/.claude-sync/storage/current/latest-backup.hostname"
+    mkdir -p "$HOME/.claude-code-sync/storage/current"
+    echo "test backup" > "$HOME/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg"
+    echo "checksum123" > "$HOME/.claude-code-sync/storage/current/latest-backup.checksum"
+    echo "$(date -Iseconds)" > "$HOME/.claude-code-sync/storage/current/latest-backup.timestamp"
+    echo "test-host" > "$HOME/.claude-code-sync/storage/current/latest-backup.hostname"
 
     # Create snapshot
     if snapshot_create "test-snapshot"; then
-        if [ -d "$HOME/.claude-sync/storage/snapshots/test-snapshot" ] && \
-           [ -f "$HOME/.claude-sync/storage/snapshots/test-snapshot/backup.tar.gz.gpg" ]; then
+        if [ -d "$HOME/.claude-code-sync/storage/snapshots/test-snapshot" ] && \
+           [ -f "$HOME/.claude-code-sync/storage/snapshots/test-snapshot/backup.tar.gz.gpg" ]; then
             test_passed "$test_name"
         else
             test_failed "$test_name" "Snapshot files not created"
@@ -107,7 +107,7 @@ test_snapshot_list() {
 test_snapshot_metadata() {
     local test_name="Snapshot metadata generation"
 
-    local metadata_file="$HOME/.claude-sync/storage/snapshots/test-snapshot/metadata.json"
+    local metadata_file="$HOME/.claude-code-sync/storage/snapshots/test-snapshot/metadata.json"
 
     if [ -f "$metadata_file" ]; then
         if command -v jq >/dev/null 2>&1; then
@@ -132,7 +132,7 @@ test_snapshot_restore_prep() {
 
     # This just tests the copy operation, not full restore
     if snapshot_restore "test-snapshot" 2>/dev/null; then
-        if [ -f "$HOME/.claude-sync/storage/current/latest-backup.tar.gz.gpg" ]; then
+        if [ -f "$HOME/.claude-code-sync/storage/current/latest-backup.tar.gz.gpg" ]; then
             test_passed "$test_name"
         else
             test_failed "$test_name" "Backup not copied to current"
@@ -153,7 +153,7 @@ test_snapshot_delete() {
     export FORCE=true
 
     if snapshot_delete "delete-me" 2>/dev/null; then
-        if [ ! -d "$HOME/.claude-sync/storage/snapshots/delete-me" ]; then
+        if [ ! -d "$HOME/.claude-code-sync/storage/snapshots/delete-me" ]; then
             test_passed "$test_name"
         else
             test_failed "$test_name" "Snapshot directory still exists"
@@ -171,7 +171,7 @@ test_snapshot_auto_name() {
 
     if snapshot_create "" 2>/dev/null; then
         # Check if a snapshot with timestamp format exists
-        local snapshot_count=$(ls "$HOME/.claude-sync/storage/snapshots" 2>/dev/null | grep -c "^snapshot-" || echo "0")
+        local snapshot_count=$(ls "$HOME/.claude-code-sync/storage/snapshots" 2>/dev/null | grep -c "^snapshot-" || echo "0")
         if [ "$snapshot_count" -gt 0 ]; then
             test_passed "$test_name"
         else
@@ -187,11 +187,11 @@ test_directory_structure() {
     local test_name="Storage directory structure"
 
     # Clean and reinitialize
-    rm -rf "$HOME/.claude-sync/storage"
-    mkdir -p "$HOME/.claude-sync/storage"/{current,snapshots}
+    rm -rf "$HOME/.claude-code-sync/storage"
+    mkdir -p "$HOME/.claude-code-sync/storage"/{current,snapshots}
 
-    if [ -d "$HOME/.claude-sync/storage/current" ] && \
-       [ -d "$HOME/.claude-sync/storage/snapshots" ]; then
+    if [ -d "$HOME/.claude-code-sync/storage/current" ] && \
+       [ -d "$HOME/.claude-code-sync/storage/snapshots" ]; then
         test_passed "$test_name"
     else
         test_failed "$test_name" "Directory structure not created properly"
@@ -205,7 +205,7 @@ test_snapshot_name_sanitization() {
     # Create snapshot with special characters
     if snapshot_create 'test@snapshot#with$special%chars' 2>/dev/null; then
         # Check if sanitized name exists (should only have alphanumeric, dash, underscore)
-        local sanitized_count=$(ls "$HOME/.claude-sync/storage/snapshots" 2>/dev/null | grep -c "testsnapshotwithspecialchars" || echo "0")
+        local sanitized_count=$(ls "$HOME/.claude-code-sync/storage/snapshots" 2>/dev/null | grep -c "testsnapshotwithspecialchars" || echo "0")
         if [ "$sanitized_count" -gt 0 ]; then
             test_passed "$test_name"
         else
@@ -219,7 +219,7 @@ test_snapshot_name_sanitization() {
 # Run all tests
 run_tests() {
     echo "═══════════════════════════════════════"
-    echo "  claude-sync Integration Tests"
+    echo "  claude-code-sync Integration Tests"
     echo "═══════════════════════════════════════"
     echo ""
 

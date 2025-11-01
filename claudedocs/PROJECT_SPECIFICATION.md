@@ -1,4 +1,4 @@
-# claude-sync: CLI Configuration Management Tool
+# claude-code-sync: CLI Configuration Management Tool
 
 ## Project Overview
 
@@ -54,7 +54,7 @@ The tool manages:
 ### Directory Structure
 
 ```
-~/.claude-sync/                 # Tool's working directory
+~/.claude-code-sync/                 # Tool's working directory
 ├── storage/                    # Backup storage
 │   ├── current/               # Current mirror of ~/.claude/
 │   │   ├── CLAUDE.md
@@ -167,30 +167,30 @@ Your choice:
 
 ### 1. Full Backup/Restore
 ```bash
-claude-sync backup --full
-claude-sync restore --full
+claude-code-sync backup --full
+claude-code-sync restore --full
 ```
 All-or-nothing operation, simplest workflow.
 
 ### 2. Selective by Category
 ```bash
-claude-sync backup --include mcp,commands
-claude-sync restore --only global-configs
+claude-code-sync backup --include mcp,commands
+claude-code-sync restore --only global-configs
 ```
 Choose: `global-configs`, `mcp`, `commands`, or combinations.
 
 ### 3. Individual File Selection
 ```bash
-claude-sync backup --files CLAUDE.md,MODE_Brainstorming.md
-claude-sync restore --select
+claude-code-sync backup --files CLAUDE.md,MODE_Brainstorming.md
+claude-code-sync restore --select
 ```
 Interactive file picker or explicit file list.
 
 ### 4. Versioned Snapshots
 ```bash
-claude-sync snapshot create "pre-experiment"
-claude-sync snapshot list
-claude-sync snapshot restore "2025-01-15-morning"
+claude-code-sync snapshot create "pre-experiment"
+claude-code-sync snapshot list
+claude-code-sync snapshot restore "2025-01-15-morning"
 ```
 Named or timestamped restore points, like git tags.
 
@@ -200,11 +200,11 @@ Named or timestamped restore points, like git tags.
 
 ### Core Commands
 
-#### `claude-sync init`
+#### `claude-code-sync init`
 Initialize the tool with sync backend setup.
 
 ```bash
-claude-sync init [--git <repo-url>] [--local] [--remote <user@host>]
+claude-code-sync init [--git <repo-url>] [--local] [--remote <user@host>]
 
 Options:
   --git <url>         Initialize git repository sync
@@ -213,16 +213,16 @@ Options:
   --all              Enable all sync methods
 
 Examples:
-  claude-sync init --git git@github.com:user/claude-configs.git
-  claude-sync init --local
-  claude-sync init --all
+  claude-code-sync init --git git@github.com:user/claude-configs.git
+  claude-code-sync init --local
+  claude-code-sync init --all
 ```
 
-#### `claude-sync backup`
+#### `claude-code-sync backup`
 Create encrypted backup of configurations.
 
 ```bash
-claude-sync backup [options]
+claude-code-sync backup [options]
 
 Options:
   --full                    Backup everything (default)
@@ -234,17 +234,17 @@ Options:
   -q, --quiet              Minimal output
 
 Examples:
-  claude-sync backup
-  claude-sync backup --include mcp,commands
-  claude-sync backup --snapshot "before-update" --verbose
-  claude-sync backup --files CLAUDE.md,RULES.md --dry-run
+  claude-code-sync backup
+  claude-code-sync backup --include mcp,commands
+  claude-code-sync backup --snapshot "before-update" --verbose
+  claude-code-sync backup --files CLAUDE.md,RULES.md --dry-run
 ```
 
-#### `claude-sync restore`
+#### `claude-code-sync restore`
 Restore configurations from backup.
 
 ```bash
-claude-sync restore [options]
+claude-code-sync restore [options]
 
 Options:
   --full                    Restore everything
@@ -258,17 +258,17 @@ Options:
   -v, --verbose            Detailed output
 
 Examples:
-  claude-sync restore --dry-run
-  claude-sync restore --only mcp --interactive
-  claude-sync restore --snapshot "2025-01-15-morning"
-  claude-sync restore --machine work-laptop --verbose
+  claude-code-sync restore --dry-run
+  claude-code-sync restore --only mcp --interactive
+  claude-code-sync restore --snapshot "2025-01-15-morning"
+  claude-code-sync restore --machine work-laptop --verbose
 ```
 
-#### `claude-sync sync`
+#### `claude-code-sync sync`
 Bidirectional synchronization.
 
 ```bash
-claude-sync sync [options]
+claude-code-sync sync [options]
 
 Options:
   --remote <user@host>     Direct machine-to-machine sync
@@ -278,17 +278,17 @@ Options:
   -v, --verbose           Detailed output
 
 Examples:
-  claude-sync sync --git
-  claude-sync sync --remote user@work-laptop
-  claude-sync sync --strategy merge --dry-run
+  claude-code-sync sync --git
+  claude-code-sync sync --remote user@work-laptop
+  claude-code-sync sync --strategy merge --dry-run
 ```
 
-#### `claude-sync export / import`
+#### `claude-code-sync export / import`
 Manual file-based transfer.
 
 ```bash
-claude-sync export [options] <output-file>
-claude-sync import [options] <input-file>
+claude-code-sync export [options] <output-file>
+claude-code-sync import [options] <input-file>
 
 Export Options:
   --include <categories>   What to export
@@ -300,16 +300,16 @@ Import Options:
   -v, --verbose           Show import process
 
 Examples:
-  claude-sync export --include all claude-backup.enc
-  claude-sync import --preview claude-backup.enc
-  claude-sync import --interactive claude-backup.enc
+  claude-code-sync export --include all claude-backup.enc
+  claude-code-sync import --preview claude-backup.enc
+  claude-code-sync import --interactive claude-backup.enc
 ```
 
-#### `claude-sync snapshot`
+#### `claude-code-sync snapshot`
 Manage versioned snapshots.
 
 ```bash
-claude-sync snapshot <command> [options]
+claude-code-sync snapshot <command> [options]
 
 Commands:
   create <name>          Create named snapshot
@@ -319,17 +319,17 @@ Commands:
   diff <name1> <name2>   Compare two snapshots
 
 Examples:
-  claude-sync snapshot create "before-major-change"
-  claude-sync snapshot list
-  claude-sync snapshot restore "2025-01-15-morning"
-  claude-sync snapshot diff "morning" "evening"
+  claude-code-sync snapshot create "before-major-change"
+  claude-code-sync snapshot list
+  claude-code-sync snapshot restore "2025-01-15-morning"
+  claude-code-sync snapshot diff "morning" "evening"
 ```
 
-#### `claude-sync diff`
+#### `claude-code-sync diff`
 Compare configurations.
 
 ```bash
-claude-sync diff [options]
+claude-code-sync diff [options]
 
 Options:
   --machine <hostname>     Compare with another machine
@@ -338,16 +338,16 @@ Options:
   --files <pattern>        Only specific files
 
 Examples:
-  claude-sync diff --local
-  claude-sync diff --machine work-laptop
-  claude-sync diff --snapshot "yesterday" --files "MODE_*"
+  claude-code-sync diff --local
+  claude-code-sync diff --machine work-laptop
+  claude-code-sync diff --snapshot "yesterday" --files "MODE_*"
 ```
 
-#### `claude-sync status`
+#### `claude-code-sync status`
 Show synchronization status.
 
 ```bash
-claude-sync status [options]
+claude-code-sync status [options]
 
 Options:
   -v, --verbose          Detailed status information
@@ -409,8 +409,8 @@ All commands support:
 - [ ] Testing on single machine
 
 **Deliverables**:
-- Working `claude-sync backup` and `restore`
-- Encrypted backups in `~/.claude-sync/storage/`
+- Working `claude-code-sync backup` and `restore`
+- Encrypted backups in `~/.claude-code-sync/storage/`
 - Interactive password prompts
 - Basic documentation
 
@@ -425,7 +425,7 @@ All commands support:
 - [ ] Testing with remote repository
 
 **Deliverables**:
-- Working `claude-sync init --git <repo>`
+- Working `claude-code-sync init --git <repo>`
 - Automatic git sync on backup
 - Remote repository synchronization
 
@@ -454,7 +454,7 @@ All commands support:
 - [ ] Testing between two machines
 
 **Deliverables**:
-- Working `claude-sync sync --remote user@host`
+- Working `claude-code-sync sync --remote user@host`
 - Machine-to-machine synchronization
 - Network-based config sharing
 
@@ -563,27 +563,27 @@ All commands support:
 
 ### Installation
 ```bash
-git clone https://github.com/user/claude-sync.git
-cd claude-sync
+git clone https://github.com/user/claude-code-sync.git
+cd claude-code-sync
 ./install.sh
 ```
 
 ### Quick Start
 ```bash
 # Initialize local backups
-claude-sync init --local
+claude-code-sync init --local
 
 # Create first backup
-claude-sync backup
+claude-code-sync backup
 
 # On another machine: restore
-claude-sync restore --interactive
+claude-code-sync restore --interactive
 
 # Set up git sync
-claude-sync init --git git@github.com:user/claude-configs.git
+claude-code-sync init --git git@github.com:user/claude-configs.git
 
 # Future backups auto-sync
-claude-sync backup
+claude-code-sync backup
 ```
 
 ---
