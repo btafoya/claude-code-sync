@@ -1,0 +1,382 @@
+#!/bin/bash
+# claude-sync - CLI Configuration Management Tool
+# Version 1.0.0 - Phase 1 (Core Backup/Restore)
+
+set -euo pipefail
+
+# Determine script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$(dirname "$SCRIPT_DIR")/lib"
+
+# Source libraries
+source "$LIB_DIR/utils.sh"
+source "$LIB_DIR/encryption.sh"
+source "$LIB_DIR/backup.sh"
+source "$LIB_DIR/restore.sh"
+source "$LIB_DIR/conflict.sh"
+source "$LIB_DIR/storage.sh"
+source "$LIB_DIR/snapshot.sh"
+
+# Version
+readonly VERSION="1.1.0"
+
+# Global flags
+DRY_RUN=false
+VERBOSE=false
+QUIET=false
+FORCE=false
+INTERACTIVE=true
+
+# Show version
+show_version() {
+    echo "claude-sync v$VERSION"
+    echo "CLI utility for backing up and restoring Claude Code configurations"
+}
+
+# Show help
+show_help() {
+    cat <<EOF
+Usage: claude-sync <command> [options]
+
+Commands:
+    init                Initialize backup system
+    backup              Create encrypted backup
+    restore             Restore from backup
+    status              Show sync status
+    sync                Sync with git repository
+    snapshot            Manage snapshots
+    verify              Verify encryption setup
+    help                Show this help message
+    version             Show version information
+
+Options:
+    -n, --dry-run       Preview without executing
+    -v, --verbose       Detailed output
+    -q, --quiet         Minimal output
+    -f, --force         Skip confirmations
+    -i, --interactive   Interactive conflict resolution (default)
+    --no-interactive    Auto-resolve conflicts
+    -h, --help          Show help
+
+Examples:
+    # Initialize backup system
+    claude-sync init
+
+    # Create encrypted backup
+    claude-sync backup
+
+    # Preview what would be backed up
+    claude-sync backup --dry-run
+
+    # Restore with interactive conflict resolution
+    claude-sync restore
+
+    # Restore without prompts (use backup version)
+    claude-sync restore --no-interactive
+
+    # Check status
+    claude-sync status
+
+    # Initialize git repository
+    claude-sync init --git git@github.com:user/claude-configs.git
+
+    # Sync with git repository
+    claude-sync sync
+
+    # Create a snapshot
+    claude-sync snapshot create "before-experiment"
+
+    # List all snapshots
+    claude-sync snapshot list
+
+    # Restore from snapshot
+    claude-sync snapshot restore "before-experiment"
+
+    # Verify encryption is working
+    claude-sync verify
+
+Documentation:
+    README.md                           - User guide
+    claudedocs/PROJECT_SPECIFICATION.md - Complete specification
+    claudedocs/QUICK_START.md           - Getting started guide
+
+EOF
+}
+
+# Parse global flags
+parse_global_flags() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -n|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                export VERBOSE=true
+                shift
+                ;;
+            -q|--quiet)
+                QUIET=true
+                shift
+                ;;
+            -f|--force)
+                FORCE=true
+                export FORCE=true
+                shift
+                ;;
+            -i|--interactive)
+                INTERACTIVE=true
+                shift
+                ;;
+            --no-interactive)
+                INTERACTIVE=false
+                shift
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            *)
+                # Not a global flag, stop parsing
+                break
+                ;;
+        esac
+    done
+}
+
+# Command: init
+cmd_init() {
+    local git_url=""
+
+    # Parse flags
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --git)
+                git_url="$2"
+                shift 2
+                ;;
+            *)
+                parse_global_flags "$1"
+                shift
+                ;;
+        esac
+    done
+
+    log_info "Initializing claude-sync..."
+    backup_init
+
+    # Initialize git if URL provided
+    if [ -n "$git_url" ]; then
+        storage_git_init "$git_url"
+    fi
+
+    echo ""
+    log_info "Next steps:"
+    log_info "  1. Create your first backup:"
+    log_info "     $ claude-sync backup"
+    log_info ""
+    if [ -n "$git_url" ]; then
+        log_info "  2. Backups will automatically sync to git repository"
+    else
+        log_info "  2. On another machine, restore:"
+        log_info "     $ claude-sync restore"
+    fi
+    echo ""
+}
+
+# Command: backup
+cmd_backup() {
+    parse_global_flags "$@"
+
+    # Check dependencies first
+    check_dependencies
+
+    backup_full "$DRY_RUN"
+}
+
+# Command: restore
+cmd_restore() {
+    parse_global_flags "$@"
+
+    # Check dependencies first
+    check_dependencies
+
+    restore_full "$DRY_RUN" "$INTERACTIVE"
+}
+
+# Command: status
+cmd_status() {
+    parse_global_flags "$@"
+
+    log_info "═══════════════════════════════════════"
+    log_info "  claude-sync Status"
+    log_info "═══════════════════════════════════════"
+
+    # Machine info
+    log_info "Machine: $(get_hostname)"
+    log_info "Version: $VERSION"
+    echo ""
+
+    # Check if initialized
+    if [ ! -d "$HOME/.claude-sync" ]; then
+        log_warn "Not initialized. Run: claude-sync init"
+        return 1
+    fi
+
+    log_info "Storage: $HOME/.claude-sync"
+
+    # Check latest backup
+    if [ -f "$HOME/.claude-sync/storage/current/latest-backup.tar.gz.gpg" ]; then
+        local backup_size=$(get_file_size "$HOME/.claude-sync/storage/current/latest-backup.tar.gz.gpg")
+
+        if [ -f "$HOME/.claude-sync/storage/current/latest-backup.timestamp" ]; then
+            local backup_time=$(cat "$HOME/.claude-sync/storage/current/latest-backup.timestamp")
+            log_info "Latest backup: $backup_time"
+        else
+            log_info "Latest backup: (timestamp unknown)"
+        fi
+
+        if [ -f "$HOME/.claude-sync/storage/current/latest-backup.hostname" ]; then
+            local backup_host=$(cat "$HOME/.claude-sync/storage/current/latest-backup.hostname")
+            log_info "Backup from: $backup_host"
+        fi
+
+        log_info "Backup size: $backup_size"
+
+        # Check mirror
+        if [ -d "$HOME/.claude-sync/storage/current/mirror" ]; then
+            local file_count=$(count_files "$HOME/.claude-sync/storage/current/mirror")
+            log_info "Files in backup: $file_count"
+        fi
+    else
+        log_warn "No backup found"
+        log_info "Create backup with: claude-sync backup"
+    fi
+
+    echo ""
+
+    # Check Claude directory
+    if [ -d "$HOME/.claude" ]; then
+        local claude_files=$(count_files "$HOME/.claude")
+        log_info "Current Claude configs: $claude_files file(s)"
+    else
+        log_warn "Claude directory not found: $HOME/.claude"
+    fi
+
+    echo ""
+}
+
+# Command: verify
+cmd_verify() {
+    parse_global_flags "$@"
+
+    check_dependencies
+    verify_encryption
+}
+
+# Command: sync
+cmd_sync() {
+    parse_global_flags "$@"
+
+    if [ ! -d "$HOME/.claude-sync/git-remote/.git" ]; then
+        log_error "Git repository not initialized. Run: claude-sync init --git <repo-url>"
+    fi
+
+    log_info "Synchronizing with git repository..."
+    storage_git_sync
+}
+
+# Command: snapshot
+cmd_snapshot() {
+    local subcommand="${1:-}"
+    shift || true
+
+    case $subcommand in
+        create)
+            local snapshot_name="${1:-}"
+            snapshot_create "$snapshot_name"
+            ;;
+        list)
+            snapshot_list
+            ;;
+        restore)
+            local snapshot_name="${1:-}"
+            snapshot_restore "$snapshot_name"
+            ;;
+        delete)
+            local snapshot_name="${1:-}"
+            snapshot_delete "$snapshot_name"
+            ;;
+        diff)
+            local snap1="${1:-}"
+            local snap2="${2:-}"
+            snapshot_diff "$snap1" "$snap2"
+            ;;
+        *)
+            log_error "Unknown snapshot subcommand: $subcommand\n\nValid subcommands: create, list, restore, delete, diff"
+            ;;
+    esac
+}
+
+# Error handler
+error_handler() {
+    local exit_code=$1
+    local line_num=$2
+
+    if [ $exit_code -ne 0 ]; then
+        log_error "Command failed at line $line_num with exit code $exit_code"
+    fi
+}
+
+# Set up error trap
+trap 'error_handler $? $LINENO' ERR
+
+# Main command dispatcher
+main() {
+    # Handle no arguments
+    if [ $# -eq 0 ]; then
+        show_help
+        exit 1
+    fi
+
+    local command=$1
+    shift
+
+    # Dispatch to command
+    case $command in
+        init)
+            cmd_init "$@"
+            ;;
+        backup)
+            cmd_backup "$@"
+            ;;
+        restore)
+            cmd_restore "$@"
+            ;;
+        status)
+            cmd_status "$@"
+            ;;
+        sync)
+            cmd_sync "$@"
+            ;;
+        snapshot)
+            cmd_snapshot "$@"
+            ;;
+        verify)
+            cmd_verify "$@"
+            ;;
+        help|--help|-h)
+            show_help
+            ;;
+        version|--version|-v)
+            show_version
+            ;;
+        *)
+            log_error "Unknown command: $command\n\nRun 'claude-sync help' for usage information"
+            ;;
+    esac
+}
+
+# Run main
+main "$@"

@@ -1,0 +1,27 @@
+# Test artifacts
+/tmp/
+*.tmp
+*.log
+
+# Backup files
+*.backup
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Test data
+test-*/
+*.test
+
+# Build artifacts
+dist/
+build/
