@@ -30,8 +30,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/claude-sync.git
-cd claude-sync
+git clone https://github.com/btafoya/claude-code-sync.git
+cd claude-code-sync
 
 # Run installation script
 ./install.sh
@@ -40,10 +40,12 @@ cd claude-sync
 claude-sync --version
 ```
 
+**Note**: Dependencies will be automatically detected and installed when you first run claude-sync.
+
 ### First Backup
 
 ```bash
-# Initialize the backup system
+# Initialize the backup system (will check and install dependencies)
 claude-sync init
 
 # Create your first encrypted backup
@@ -332,9 +334,19 @@ claude-sync sync --git
 
 ### Common Issues
 
-**Issue**: `gpg: command not found`
+**Issue**: Missing dependencies (gpg, tar, etc.)
+
+claude-sync will automatically detect and offer to install missing dependencies:
 ```bash
-sudo apt install gnupg
+claude-sync init
+# Prompts: "Install missing packages using apt? (gnupg tar gzip coreutils rsync)"
+# Answer 'y' to automatically install
+```
+
+Manual installation (if automatic fails):
+```bash
+sudo apt update
+sudo apt install gnupg tar gzip coreutils rsync jq git
 ```
 
 **Issue**: `Permission denied` on backup
@@ -381,20 +393,33 @@ tail -f ~/.claude-sync/logs/errors.log
 
 ### Dependencies
 
-Required packages (automatically checked):
+**Automatic Installation**: claude-sync will automatically detect missing dependencies and offer to install them when you first run any command.
 
-- `gpg` - Encryption/decryption
-- `tar`, `gzip` - Archive creation
-- `sha256sum` - Integrity checking
-- `jq` - JSON parsing
+**Required packages**:
+- `gpg` (gnupg) - Encryption/decryption
+- `tar` - Archive creation
+- `gzip` - Archive compression
+- `sha256sum` (coreutils) - Integrity checking
 - `rsync` - File synchronization
-- `git` - Git sync (optional)
 
-Install all dependencies:
+**Optional packages**:
+- `jq` - JSON parsing (for snapshot metadata)
+- `git` - Git repository sync
+
+**Manual installation** (if needed):
 
 ```bash
 sudo apt update
-sudo apt install gnupg tar gzip coreutils jq rsync git
+sudo apt install gnupg tar gzip coreutils rsync jq git
+```
+
+**Automatic installation** (recommended):
+
+Just run any claude-sync command, and it will prompt you to install missing packages:
+
+```bash
+claude-sync init
+# Will detect missing dependencies and offer to install them
 ```
 
 ---

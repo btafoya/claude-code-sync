@@ -18,7 +18,7 @@ source "$LIB_DIR/storage.sh"
 source "$LIB_DIR/snapshot.sh"
 
 # Version
-readonly VERSION="1.1.0"
+readonly VERSION="1.2.0"
 
 # Global flags
 DRY_RUN=false

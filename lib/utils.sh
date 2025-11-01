@@ -102,20 +102,90 @@ command_exists() {
 
 # Check required dependencies
 check_dependencies() {
-    local deps=("gpg" "tar" "gzip" "sha256sum" "jq")
-    local missing=()
+    # Map commands to apt package names
+    declare -A cmd_to_pkg=(
+        ["gpg"]="gnupg"
+        ["tar"]="tar"
+        ["gzip"]="gzip"
+        ["sha256sum"]="coreutils"
+        ["jq"]="jq"
+        ["rsync"]="rsync"
+        ["git"]="git"
+    )
 
-    for dep in "${deps[@]}"; do
-        if ! command_exists "$dep"; then
-            missing+=("$dep")
+    local required_cmds=("gpg" "tar" "gzip" "sha256sum" "rsync")
+    local optional_cmds=("jq" "git")
+    local missing_required=()
+    local missing_optional=()
+    local packages_to_install=()
+
+    # Check required dependencies
+    for cmd in "${required_cmds[@]}"; do
+        if ! command_exists "$cmd"; then
+            missing_required+=("$cmd")
+            packages_to_install+=("${cmd_to_pkg[$cmd]}")
         fi
     done
 
-    if [ ${#missing[@]} -gt 0 ]; then
-        log_error "Missing dependencies: ${missing[*]}\nInstall with: sudo apt install ${missing[*]}"
+    # Check optional dependencies
+    for cmd in "${optional_cmds[@]}"; do
+        if ! command_exists "$cmd"; then
+            missing_optional+=("$cmd")
+        fi
+    done
+
+    # Handle missing required dependencies
+    if [ ${#missing_required[@]} -gt 0 ]; then
+        log_warn "Missing required dependencies: ${missing_required[*]}"
+        echo ""
+
+        if confirm_action "Install missing packages using apt? (${packages_to_install[*]})"; then
+            log_info "Installing packages: ${packages_to_install[*]}"
+
+            if sudo apt update && sudo apt install -y "${packages_to_install[@]}"; then
+                log_info "✓ Successfully installed required packages"
+
+                # Verify installation
+                local still_missing=()
+                for cmd in "${missing_required[@]}"; do
+                    if ! command_exists "$cmd"; then
+                        still_missing+=("$cmd")
+                    fi
+                done
+
+                if [ ${#still_missing[@]} -gt 0 ]; then
+                    log_error "Installation completed but commands still missing: ${still_missing[*]}"
+                fi
+            else
+                log_error "Failed to install packages. Please install manually:\n  sudo apt install ${packages_to_install[*]}"
+            fi
+        else
+            log_error "Required dependencies not installed. Install with:\n  sudo apt install ${packages_to_install[*]}"
+        fi
     fi
 
-    log_debug "All dependencies present"
+    # Handle missing optional dependencies
+    if [ ${#missing_optional[@]} -gt 0 ]; then
+        log_warn "Missing optional dependencies: ${missing_optional[*]}"
+
+        local optional_pkgs=()
+        for cmd in "${missing_optional[@]}"; do
+            optional_pkgs+=("${cmd_to_pkg[$cmd]}")
+        done
+
+        if [ "${FORCE:-false}" = "false" ]; then
+            echo ""
+            if confirm_action "Install optional packages? (${optional_pkgs[*]})"; then
+                log_info "Installing optional packages: ${optional_pkgs[*]}"
+                sudo apt install -y "${optional_pkgs[@]}" || log_warn "Some optional packages failed to install"
+            else
+                log_info "Skipping optional dependencies. Some features may be limited."
+                log_info "  To install later: sudo apt install ${optional_pkgs[*]}"
+            fi
+        fi
+    fi
+
+    log_debug "Dependency check complete"
 }
 
 # Ensure directory exists with proper permissions
